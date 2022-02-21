@@ -3,30 +3,31 @@ import { ConfigModule } from '@nestjs/config'
 import * as Joi from 'joi'
 import { MulterModule } from '@nestjs/platform-express'
 
-import { APP_GUARD } from '@nestjs/core'
+// import { APP_GUARD } from '@nestjs/core'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
-import { DatabaseModule } from './database/database.module'
+// import { DatabaseModule } from './database/database.module'
 import { LoggerModule } from './logger/logger.module'
 import LogsMiddleware from './utils/logs.middleware'
 
-import { UserModule } from './user/user.module'
-import { AuthModule } from './auth/auth.module'
-import { JwtAuthGuard } from './auth/jwt-auth.guard'
+// import { UserModule } from './user/user.module'
+// import { AuthModule } from './auth/auth.module'
+// import { JwtAuthGuard } from './auth/jwt-auth.guard'
 
-import { AddressModule } from './app/address/address.module'
-import { CarModule } from './app/car/car.module'
-import { ClassModule } from './app/class/class.module'
-import { DriverModule } from './app/driver/driver.module'
-import { RaceModule } from './app/race/race.module'
-import { TeamModule } from './app/team/team.module'
-import { RaceResultModule } from './app/race-result/race-result.module'
+// import { AddressModule } from './app/address/address.module'
+// import { CarModule } from './app/car/car.module'
+// import { ClassModule } from './app/class/class.module'
+// import { DriverModule } from './app/driver/driver.module'
+// import { RaceModule } from './app/race/race.module'
+// import { TeamModule } from './app/team/team.module'
+// import { RaceResultModule } from './app/race-result/race-result.module'
+import { PartnerModule } from './app/partner/partner.module'
 
 @Module({
   imports: [
-    DatabaseModule,
+    // DatabaseModule,
     LoggerModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
@@ -42,15 +43,16 @@ import { RaceResultModule } from './app/race-result/race-result.module'
       })
     }),
     MulterModule.register(),
-    CarModule,
-    AddressModule,
-    ClassModule,
-    DriverModule,
-    RaceModule,
-    TeamModule,
-    RaceResultModule,
-    AuthModule,
-    UserModule
+    // CarModule,
+    // AddressModule,
+    // ClassModule,
+    // DriverModule,
+    // RaceModule,
+    // TeamModule,
+    // RaceResultModule,
+    // AuthModule,
+    // UserModule,
+    PartnerModule
     // AutomapperModule.forRoot({
     //   options: [{
     //     name: 'classMapper',
@@ -62,11 +64,11 @@ import { RaceResultModule } from './app/race-result/race-result.module'
   ],
   controllers: [AppController],
   providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard
-    }
+    AppService
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard
+    // }
   ]
 })
 export class AppModule {
