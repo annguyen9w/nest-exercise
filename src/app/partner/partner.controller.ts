@@ -24,17 +24,17 @@ export class PartnerController {
   @UsePipes(new JoiValidationPipe({
     body: Joi.object({
       name: Joi.string().required(),
-      street: Joi.string(),
-      street2: Joi.string(),
-      city: Joi.string(),
-      state_id: Joi.number(),
-      zip: Joi.string(),
-      country_id: Joi.number(),
-      vat: Joi.string(),
-      phone: Joi.string(),
-      mobile: Joi.string(),
-      email: Joi.string(),
-      website: Joi.string(),
+      street: Joi.string().allow(null),
+      street2: Joi.string().allow(null),
+      city: Joi.string().allow(null),
+      state_id: Joi.number().allow(null),
+      zip: Joi.string().allow(null),
+      country_id: Joi.number().allow(null),
+      vat: Joi.string().allow(null),
+      phone: Joi.string().allow(null),
+      mobile: Joi.string().allow(null),
+      email: Joi.string().allow(null),
+      website: Joi.string().allow(null),
       is_company: Joi.boolean()
     })
   }))
@@ -77,17 +77,17 @@ export class PartnerController {
     }),
     body: Joi.object({
       name: Joi.string().required(),
-      street: Joi.alternatives().try(Joi.string(), Joi.boolean()),
-      street2: Joi.alternatives().try(Joi.string(), Joi.boolean()),
-      city: Joi.alternatives().try(Joi.string(), Joi.boolean()),
-      state_id: Joi.alternatives().try(Joi.number(), Joi.boolean()),
-      zip: Joi.alternatives().try(Joi.string(), Joi.boolean()),
-      country_id: Joi.alternatives().try(Joi.number(), Joi.boolean()),
-      vat: Joi.alternatives().try(Joi.string(), Joi.boolean()),
-      phone: Joi.alternatives().try(Joi.string(), Joi.boolean()),
-      mobile: Joi.alternatives().try(Joi.string(), Joi.boolean()),
-      email: Joi.alternatives().try(Joi.string(), Joi.boolean()),
-      website: Joi.alternatives().try(Joi.string(), Joi.boolean()),
+      street: Joi.alternatives().try(Joi.string().allow(null), Joi.boolean()),
+      street2: Joi.alternatives().try(Joi.string().allow(null), Joi.boolean()),
+      city: Joi.alternatives().try(Joi.string().allow(null), Joi.boolean()),
+      state_id: Joi.alternatives().try(Joi.number().allow(null), Joi.boolean()),
+      zip: Joi.alternatives().try(Joi.string().allow(null), Joi.boolean()),
+      country_id: Joi.alternatives().try(Joi.number().allow(null), Joi.boolean()),
+      vat: Joi.alternatives().try(Joi.string().allow(null), Joi.boolean()),
+      phone: Joi.alternatives().try(Joi.string().allow(null), Joi.boolean()),
+      mobile: Joi.alternatives().try(Joi.string().allow(null), Joi.boolean()),
+      email: Joi.alternatives().try(Joi.string().allow(null), Joi.boolean()),
+      website: Joi.alternatives().try(Joi.string().allow(null), Joi.boolean()),
       is_company: Joi.boolean()
     })
   }))

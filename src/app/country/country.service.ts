@@ -9,7 +9,7 @@ export class CountryService {
   findAll(modelName: string, method: string, query: { name: string, fields: Array<string> }) {
     const params = [
       [[['name', 'ilike', query.name]]],
-      { fields: query.fields }
+      { fields: query.fields, limit: 7 }
     ]
     return this.odooService.execute(modelName, method, params)
   }
