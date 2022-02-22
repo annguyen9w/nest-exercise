@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Body, Patch, Param, Delete, Query, UsePipes, HttpCode, Req, HttpStatus
+  Controller, Get, Post, Body, Patch, Param, Delete, Query, UsePipes, HttpCode, HttpStatus
 } from '@nestjs/common'
 import {
   ApiTags, ApiQuery,
@@ -7,10 +7,10 @@ import {
 } from '@nestjs/swagger'
 import * as Joi from 'joi'
 import { PartnerService } from './partner.service'
-// import { JoiValidationPipe } from '../common/validation.pipe'
-
-// import { Mapper } from '../common/mapper'
+import { JoiValidationPipe } from '../common/validation.pipe'
 import { MzSwaggerAuth } from '../common/decorator/swagger-auth.decorator'
+import { CreatePartnerDto } from './dto/create-partner.dto'
+import { UpdatePartnerDto } from './dto/update-partner.dto'
 
 @ApiTags('partners')
 @MzSwaggerAuth()
@@ -18,96 +18,98 @@ import { MzSwaggerAuth } from '../common/decorator/swagger-auth.decorator'
 export class PartnerController {
   constructor(
     private readonly partnerService: PartnerService
-    // private readonly mapper: Mapper
   ) {}
 
-  // @Post()
-  // @UsePipes(new JoiValidationPipe({
-  //   body: Joi.object({
-  //     name: Joi.string().max(150).required(),
-  //     street: Joi.string().allow(null, ''),
-  //     street2: Joi.string().allow(null, ''),
-  //     city: Joi.string().required(),
-  //     state: Joi.string().required(),
-  //     zip: Joi.string().required(),
-  //     country: Joi.string().required()
-  //   })
-  // }))
-  // @ApiCreatedResponse()
-  // @ApiBadRequestResponse()
-  // // @HttpCode(HttpStatus.CREATED) // by default
-  // async create(@Body() createAddressDto: CreateAddressDto, @Req() req) {
-  //   const result = await this.addressService.create(this.mapper.map(CreateAddressDto, Address, createAddressDto), req.user)
-  //   return result.identifiers[0]
-  // }
-
-  @Get()
-  // @UsePipes(new JoiValidationPipe({
-  //   query: Joi.object({
-  //     pageSize: Joi.number().integer().min(1).max(50)
-  //       .default(10),
-  //     currentPage: Joi.number().integer().min(1).default(1)
-  //   })
-  // }))
-  // @ApiQuery({
-  //   name: 'pageSize', required: false, schema: { minimum: 1, maximum: 50 }, description: 'Page size.'
-  // })
-  // @ApiQuery({
-  //   name: 'currentPage', required: false, schema: { minimum: 1 }, description: 'Current page.'
-  // })
-  // @ApiOkResponse({ type: Address, isArray: true })
-  // @Query('pageSize') pageSize: number, @Query('currentPage') currentPage: number
-  async findAll() {
-    return this.partnerService.findAll()
-    // {
-    //   pagination: {
-    //     pageSize,
-    //     currentPage
-    //   }
-    // }
+  @Post()
+  @UsePipes(new JoiValidationPipe({
+    body: Joi.object({
+      name: Joi.string().required(),
+      street: Joi.string(),
+      street2: Joi.string(),
+      city: Joi.string(),
+      state_id: Joi.number(),
+      zip: Joi.string(),
+      country_id: Joi.number(),
+      vat: Joi.string(),
+      phone: Joi.string(),
+      mobile: Joi.string(),
+      email: Joi.string(),
+      website: Joi.string(),
+      is_company: Joi.boolean()
+    })
+  }))
+  @ApiCreatedResponse()
+  @ApiBadRequestResponse()
+  async create(@Body() createPartnerDto: CreatePartnerDto) {
+    const result = await this.partnerService.create(createPartnerDto)
+    return result
   }
 
-  // @Get(':id')
-  // @ApiNotFoundResponse()
-  // @ApiOkResponse({ type: Address })
-  // findOne(@Param('id') id: string) {
-  //   return this.addressService.findOne(id)
-  // }
+  @Get()
+  @UsePipes(new JoiValidationPipe({
+    query: Joi.object({
+      limit: Joi.number().integer().min(1).max(50),
+      offset: Joi.number().integer().min(0)
+    })
+  }))
+  @ApiQuery({
+    name: 'limit', required: false, schema: { minimum: 1, maximum: 50 }, description: 'Limir.'
+  })
+  @ApiQuery({
+    name: 'offset', required: false, schema: { minimum: 0 }, description: 'Offset.'
+  })
+  @ApiOkResponse({ isArray: true })
+  async findAll(@Query('offset') offset: number, @Query('limit') limit: number) {
+    return this.partnerService.findAll({ fields: ['display_name', 'email', 'phone', 'city', 'state_id', 'country_id'], offset: Number(offset), limit: Number(limit) })
+  }
 
-  // @Patch(':id')
-  // @UsePipes(new JoiValidationPipe({
-  //   param: Joi.object({
-  //     id: Joi.string().guid().required()
-  //   }),
-  //   body: Joi.object({
-  //     name: Joi.string(),
-  //     street: Joi.string().allow(null, ''),
-  //     street2: Joi.string().allow(null, ''),
-  //     city: Joi.string(),
-  //     state: Joi.string(),
-  //     zip: Joi.string(),
-  //     country: Joi.string()
-  //   })
-  // }))
-  // @ApiBadRequestResponse()
-  // @ApiNotFoundResponse()
-  // @ApiNoContentResponse()
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto, @Req() req) {
-  //   return this.addressService.update(id, this.mapper.map(UpdateAddressDto, Address, updateAddressDto), req.user)
-  // }
+  @Get(':id')
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  findOne(@Param('id') id: number) {
+    return this.partnerService.findOne(id)
+  }
 
-  // @Delete(':id')
-  // @UsePipes(new JoiValidationPipe({
-  //   param: Joi.object({
-  //     id: Joi.string().guid().required()
-  //   })
-  // }))
-  // @ApiBadRequestResponse()
-  // @ApiNotFoundResponse()
-  // @ApiNoContentResponse()
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // remove(@Param('id') id: string) {
-  //   return this.addressService.delete(id)
-  // }
+  @Patch(':id')
+  @UsePipes(new JoiValidationPipe({
+    param: Joi.object({
+      id: Joi.number().required()
+    }),
+    body: Joi.object({
+      name: Joi.string().required(),
+      street: Joi.alternatives().try(Joi.string(), Joi.boolean()),
+      street2: Joi.alternatives().try(Joi.string(), Joi.boolean()),
+      city: Joi.alternatives().try(Joi.string(), Joi.boolean()),
+      state_id: Joi.alternatives().try(Joi.number(), Joi.boolean()),
+      zip: Joi.alternatives().try(Joi.string(), Joi.boolean()),
+      country_id: Joi.alternatives().try(Joi.number(), Joi.boolean()),
+      vat: Joi.alternatives().try(Joi.string(), Joi.boolean()),
+      phone: Joi.alternatives().try(Joi.string(), Joi.boolean()),
+      mobile: Joi.alternatives().try(Joi.string(), Joi.boolean()),
+      email: Joi.alternatives().try(Joi.string(), Joi.boolean()),
+      website: Joi.alternatives().try(Joi.string(), Joi.boolean()),
+      is_company: Joi.boolean()
+    })
+  }))
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiNoContentResponse()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  update(@Param('id') id: number, @Body() updatePartnerDto: UpdatePartnerDto) {
+    return this.partnerService.update(id, updatePartnerDto)
+  }
+
+  @Delete(':id')
+  @UsePipes(new JoiValidationPipe({
+    param: Joi.object({
+      id: Joi.number().required()
+    })
+  }))
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiNoContentResponse()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id') id: number) {
+    return this.partnerService.delete(id)
+  }
 }

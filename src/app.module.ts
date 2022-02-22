@@ -24,6 +24,7 @@ import LogsMiddleware from './utils/logs.middleware'
 // import { TeamModule } from './app/team/team.module'
 // import { RaceResultModule } from './app/race-result/race-result.module'
 import { PartnerModule } from './app/partner/partner.module'
+import { CountryModule } from './app/country/country.module'
 
 @Module({
   imports: [
@@ -52,7 +53,8 @@ import { PartnerModule } from './app/partner/partner.module'
     // RaceResultModule,
     // AuthModule,
     // UserModule,
-    PartnerModule
+    PartnerModule,
+    CountryModule
     // AutomapperModule.forRoot({
     //   options: [{
     //     name: 'classMapper',
