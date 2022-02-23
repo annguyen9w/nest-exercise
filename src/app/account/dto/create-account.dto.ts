@@ -1,6 +1,6 @@
 // import { ApiProperty } from '@nestjs/swagger'
 
-export class CreatePartnerDto implements Readonly<CreatePartnerDto> {
+export class CreateAccountDto implements Readonly<CreateAccountDto> {
   name: string
 
   street: string

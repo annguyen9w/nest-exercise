@@ -23,7 +23,8 @@ import LogsMiddleware from './utils/logs.middleware'
 // import { RaceModule } from './app/race/race.module'
 // import { TeamModule } from './app/team/team.module'
 // import { RaceResultModule } from './app/race-result/race-result.module'
-import { PartnerModule } from './app/partner/partner.module'
+import { AccountModule } from './app/account/account.module'
+import { ContactModule } from './app/contact/contact.module'
 import { CountryModule } from './app/country/country.module'
 
 @Module({
@@ -53,7 +54,8 @@ import { CountryModule } from './app/country/country.module'
     // RaceResultModule,
     // AuthModule,
     // UserModule,
-    PartnerModule,
+    AccountModule,
+    ContactModule,
     CountryModule
     // AutomapperModule.forRoot({
     //   options: [{
