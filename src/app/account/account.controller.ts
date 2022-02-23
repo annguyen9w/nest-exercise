@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Body, Patch, Param, Delete, Query, UsePipes, HttpCode, HttpStatus
+  Controller, Get, Post, Body, Patch, Param, Delete, Query, UsePipes, HttpCode, HttpStatus, BadRequestException
 } from '@nestjs/common'
 import {
   ApiTags, ApiQuery,
@@ -41,15 +41,19 @@ export class AccountController {
   @ApiCreatedResponse()
   @ApiBadRequestResponse()
   async create(@Body() createAccountDto: CreateAccountDto) {
-    const tmpCreateAccountDto = new CreateAccountDto()
-    for (const key in createAccountDto) {
-      if (Object.prototype.hasOwnProperty.call(createAccountDto, key)) {
-        // Convert falsy value to false
-        tmpCreateAccountDto[key] = createAccountDto[key] || false
+    try {
+      const tmpCreateAccountDto = new CreateAccountDto()
+      for (const key in createAccountDto) {
+        if (Object.prototype.hasOwnProperty.call(createAccountDto, key)) {
+          // Convert falsy value to false
+          tmpCreateAccountDto[key] = createAccountDto[key] || false
+        }
       }
+      const resp = await this.accountService.create(tmpCreateAccountDto)
+      return resp
+    } catch (error) {
+      throw new BadRequestException(error)
     }
-    const result = await this.accountService.create(tmpCreateAccountDto)
-    return result
   }
 
   @Get()
@@ -67,12 +71,17 @@ export class AccountController {
   })
   @ApiOkResponse({ isArray: true })
   async findAll(@Query('offset') offset: number, @Query('limit') limit: number) {
-    return this.accountService.findAll({
-      is_company: true,
-      fields: ['display_name', 'email', 'phone', 'city', 'state_id', 'country_id'],
-      offset: Number(offset),
-      limit: Number(limit)
-    })
+    try {
+      const resp = await this.accountService.findAll({
+        is_company: true,
+        fields: ['display_name', 'email', 'phone', 'city', 'state_id', 'country_id'],
+        offset: Number(offset),
+        limit: Number(limit)
+      })
+      return resp
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
   }
 
   @Get('search')
@@ -86,14 +95,18 @@ export class AccountController {
   })
   @ApiOkResponse({ isArray: true })
   async search(@Query('name') name: string) {
-    const { data } = await this.accountService.findAll({
-      name,
-      is_company: true,
-      fields: ['display_name', 'vat'],
-      offset: 0,
-      limit: 7
-    })
-    return data.map((item) => ({ value: item.id, label: [item.display_name, item.vat].filter(Boolean).join(' ‒ ') }))
+    try {
+      const { data } = await this.accountService.findAll({
+        name,
+        is_company: true,
+        fields: ['display_name', 'vat'],
+        offset: 0,
+        limit: 7
+      })
+      return data.map((item) => ({ value: item.id, label: [item.display_name, item.vat].filter(Boolean).join(' ‒ ') }))
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
   }
 
   @Get('entities')
@@ -105,37 +118,46 @@ export class AccountController {
   @ApiNotFoundResponse()
   @ApiOkResponse()
   async getEntities(@Query('id') id: number) {
-    const resp = {
-      stateOptions: [],
-      countryOptions: [],
-      item: {}
-    }
-    if (id) {
-      const item = await this.accountService.findOne(id, ['name', 'street', 'street2', 'city', 'state_id', 'zip', 'country_id', 'vat', 'phone', 'mobile', 'email', 'website', 'is_company'])
-      if (item.state_id) {
-        resp.stateOptions = [{ value: item.state_id[0], label: item.state_id[1] as string }]
-        const titleValue = item.state_id[0]
-        item.state_id = titleValue
+    try {
+      const resp = {
+        stateOptions: [],
+        countryOptions: [],
+        item: {}
       }
-      if (item.country_id) {
-        resp.countryOptions = [{ value: item.country_id[0], label: item.country_id[1] as string }]
-        const titleValue = item.country_id[0]
-        item.country_id = titleValue
-      }
-      for (const key in item) {
-        if (Object.prototype.hasOwnProperty.call(item, key)) {
-          resp.item[key] = item[key] || null
+      if (id) {
+        const item = await this.accountService.findOne(id, ['name', 'street', 'street2', 'city', 'state_id', 'zip', 'country_id', 'vat', 'phone', 'mobile', 'email', 'website', 'is_company'])
+        if (item.state_id) {
+          resp.stateOptions = [{ value: item.state_id[0], label: item.state_id[1] as string }]
+          const titleValue = item.state_id[0]
+          item.state_id = titleValue
+        }
+        if (item.country_id) {
+          resp.countryOptions = [{ value: item.country_id[0], label: item.country_id[1] as string }]
+          const titleValue = item.country_id[0]
+          item.country_id = titleValue
+        }
+        for (const key in item) {
+          if (Object.prototype.hasOwnProperty.call(item, key)) {
+            resp.item[key] = item[key] || null
+          }
         }
       }
+      return resp
+    } catch (error) {
+      throw new BadRequestException(error)
     }
-    return resp
   }
 
   @Get(':id')
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  findOne(@Param('id') id: number) {
-    return this.accountService.findOne(id, ['name', 'street', 'street2', 'city', 'state_id', 'zip', 'country_id', 'vat', 'phone', 'mobile', 'email', 'website', 'is_company'])
+  async findOne(@Param('id') id: number) {
+    try {
+      const resp = await this.accountService.findOne(id, ['name', 'street', 'street2', 'city', 'state_id', 'zip', 'country_id', 'vat', 'phone', 'mobile', 'email', 'website', 'is_company'])
+      return resp
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
   }
 
   @Patch(':id')
@@ -163,15 +185,19 @@ export class AccountController {
   @ApiNotFoundResponse()
   @ApiNoContentResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
-  update(@Param('id') id: number, @Body() updateAccountDto: UpdateAccountDto) {
-    const tmpUpdateAccountDto = new UpdateAccountDto()
-    for (const key in updateAccountDto) {
-      if (Object.prototype.hasOwnProperty.call(updateAccountDto, key)) {
-        // Convert falsy value to false
-        tmpUpdateAccountDto[key] = updateAccountDto[key] || false
+  async update(@Param('id') id: number, @Body() updateAccountDto: UpdateAccountDto) {
+    try {
+      const tmpUpdateAccountDto = new UpdateAccountDto()
+      for (const key in updateAccountDto) {
+        if (Object.prototype.hasOwnProperty.call(updateAccountDto, key)) {
+          // Convert falsy value to false
+          tmpUpdateAccountDto[key] = updateAccountDto[key] || false
+        }
       }
+      await this.accountService.update(id, updateAccountDto)
+    } catch (error) {
+      throw new BadRequestException(error)
     }
-    return this.accountService.update(id, updateAccountDto)
   }
 
   @Delete(':id')
@@ -184,7 +210,11 @@ export class AccountController {
   @ApiNotFoundResponse()
   @ApiNoContentResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: number) {
-    return this.accountService.delete(id)
+  async remove(@Param('id') id: number) {
+    try {
+      await this.accountService.delete(id)
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
   }
 }

@@ -36,7 +36,7 @@ export class AccountService {
     inParams.push(payload)
     const params = []
     params.push(inParams)
-    return this.odooService.execute('res.partner', 'create', params)
+    return this.odooService.execute('res.partner', 'create', inParams)
   }
 
   async update(id: number, payload: object) {

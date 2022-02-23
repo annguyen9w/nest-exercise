@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Body, Patch, Param, Delete, Query, UsePipes, HttpCode, HttpStatus
+  Controller, Get, Post, Body, Patch, Param, Delete, Query, UsePipes, HttpCode, HttpStatus, BadRequestException
 } from '@nestjs/common'
 import {
   ApiTags, ApiQuery,
@@ -36,15 +36,19 @@ export class ContactController {
   @ApiCreatedResponse()
   @ApiBadRequestResponse()
   async create(@Body() createContactDto: CreateContactDto) {
-    const tmpCreateContactDto = new CreateContactDto()
-    for (const key in createContactDto) {
-      if (Object.prototype.hasOwnProperty.call(createContactDto, key)) {
-        // Convert falsy value to false
-        tmpCreateContactDto[key] = createContactDto[key] || false
+    try {
+      const tmpCreateContactDto = new CreateContactDto()
+      for (const key in createContactDto) {
+        if (Object.prototype.hasOwnProperty.call(createContactDto, key)) {
+          // Convert falsy value to false
+          tmpCreateContactDto[key] = createContactDto[key] || false
+        }
       }
+      const resp = await this.contactService.create(tmpCreateContactDto)
+      return resp
+    } catch (error) {
+      throw new BadRequestException(error)
     }
-    const result = await this.contactService.create(tmpCreateContactDto)
-    return result
   }
 
   @Get()
@@ -62,12 +66,17 @@ export class ContactController {
   })
   @ApiOkResponse({ isArray: true })
   async findAll(@Query('offset') offset: number, @Query('limit') limit: number) {
-    return this.contactService.findAll({
-      is_company: false,
-      fields: ['display_name', 'email', 'phone', 'city', 'state_id', 'country_id'],
-      offset: Number(offset),
-      limit: Number(limit)
-    })
+    try {
+      const resp = await this.contactService.findAll({
+        is_company: false,
+        fields: ['display_name', 'email', 'phone', 'city', 'state_id', 'country_id'],
+        offset: Number(offset),
+        limit: Number(limit)
+      })
+      return resp
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
   }
 
   @Get('entities')
@@ -79,37 +88,46 @@ export class ContactController {
   @ApiNotFoundResponse()
   @ApiOkResponse()
   async getEntities(@Query('id') id: number) {
-    const titleOptions = await this.contactService.findAllByType('title')
-    const resp = {
-      titleOptions: titleOptions.map((item) => ({ value: item.id, label: item.name })),
-      accountOptions: [],
-      item: {}
-    }
-    if (id) {
-      const item = await this.contactService.findOne(id, ['name', 'parent_id', 'function', 'phone', 'mobile', 'email', 'website', 'title'])
-      if (item.title) {
-        const titleValue = item.title[0]
-        item.title = titleValue
+    try {
+      const titleOptions = await this.contactService.findAllByType('title')
+      const resp = {
+        titleOptions: titleOptions.map((item) => ({ value: item.id, label: item.name })),
+        accountOptions: [],
+        item: {}
       }
-      if (item.parent_id) {
-        resp.accountOptions = [{ value: item.parent_id[0], label: item.parent_id[1] as string }]
-        const titleValue = item.parent_id[0]
-        item.parent_id = titleValue
-      }
-      for (const key in item) {
-        if (Object.prototype.hasOwnProperty.call(item, key)) {
-          resp.item[key] = item[key] || null
+      if (id) {
+        const item = await this.contactService.findOne(id, ['name', 'parent_id', 'function', 'phone', 'mobile', 'email', 'website', 'title'])
+        if (item.title) {
+          const titleValue = item.title[0]
+          item.title = titleValue
+        }
+        if (item.parent_id) {
+          resp.accountOptions = [{ value: item.parent_id[0], label: item.parent_id[1] as string }]
+          const titleValue = item.parent_id[0]
+          item.parent_id = titleValue
+        }
+        for (const key in item) {
+          if (Object.prototype.hasOwnProperty.call(item, key)) {
+            resp.item[key] = item[key] || null
+          }
         }
       }
+      return resp
+    } catch (error) {
+      throw new BadRequestException(error)
     }
-    return resp
   }
 
   @Get(':id')
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  findOne(@Param('id') id: number) {
-    return this.contactService.findOne(id, ['name', 'parent_id', 'function', 'phone', 'mobile', 'email', 'website', 'title'])
+  async findOne(@Param('id') id: number) {
+    try {
+      const resp = await this.contactService.findOne(id, ['name', 'parent_id', 'function', 'phone', 'mobile', 'email', 'website', 'title'])
+      return resp
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
   }
 
   @Patch(':id')
@@ -132,15 +150,19 @@ export class ContactController {
   @ApiNotFoundResponse()
   @ApiNoContentResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
-  update(@Param('id') id: number, @Body() updateContactDto: UpdateContactDto) {
-    const tmpUpdateContactDto = new UpdateContactDto()
-    for (const key in updateContactDto) {
-      if (Object.prototype.hasOwnProperty.call(updateContactDto, key)) {
-        // Convert falsy value to false
-        tmpUpdateContactDto[key] = updateContactDto[key] || false
+  async update(@Param('id') id: number, @Body() updateContactDto: UpdateContactDto) {
+    try {
+      const tmpUpdateContactDto = new UpdateContactDto()
+      for (const key in updateContactDto) {
+        if (Object.prototype.hasOwnProperty.call(updateContactDto, key)) {
+          // Convert falsy value to false
+          tmpUpdateContactDto[key] = updateContactDto[key] || false
+        }
       }
+      await this.contactService.update(id, updateContactDto)
+    } catch (error) {
+      throw new BadRequestException(error)
     }
-    return this.contactService.update(id, updateContactDto)
   }
 
   @Delete(':id')
@@ -153,7 +175,11 @@ export class ContactController {
   @ApiNotFoundResponse()
   @ApiNoContentResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: number) {
-    return this.contactService.delete(id)
+  async remove(@Param('id') id: number) {
+    try {
+      await this.contactService.delete(id)
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
   }
 }
