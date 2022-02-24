@@ -4,6 +4,7 @@ import * as Joi from 'joi'
 import { MulterModule } from '@nestjs/platform-express'
 
 // import { APP_GUARD } from '@nestjs/core'
+import { appConfig } from './app.config'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -38,7 +39,7 @@ import { CountryModule } from './app/country/country.module'
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
-        PORT: Joi.number().default(3000),
+        PORT: Joi.number().default(appConfig.getPort()),
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test', 'provision')
           .default('development')

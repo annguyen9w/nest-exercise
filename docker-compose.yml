@@ -1,18 +1,25 @@
 version: '3'
 
 services:
-  postgres_nest:
-    image: postgres:9.6
-    container_name: postgres_nest
-    # environment:
-    #   POSTGRES_USER: my_user
-    #   POSTGRES_PASSWORD: Passw0rd!
-    #   POSTGRES_DB: my_db
-    # volumes:
-    #   - ./data/postgres:/var/lib/postgresql/data
-    #   - ./data/postgres:/data/postgres (?)
+  mazi-backend:
+    build:
+      context: .
+      target: development
+    command: npm run start:dev:no-docker
+    image: mazi-backend
+    container_name: mazi-backend
+    expose:
+      - "${PORT-3000}"
+    ports:
+      - "${PORT-3000}:${PORT-3000}"
+      - 9229:9229
     env_file:
       - .env
-    ports:
-      - "${POSTGRES_PORT-5432}:5432"
-    restart: always
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+networks:
+  default:
+    external:
+      name: nginx-proxy-net

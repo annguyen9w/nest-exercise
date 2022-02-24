@@ -6,8 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "db:start": "docker-compose up -d",
-    "db:stop": "docker-compose down",
+    "db:start": "docker-compose -f docker-compose.database.yml up -d",
+    "db:stop": "docker-compose -f docker-compose.database.yml down",
     "db:drop": "npm run typeorm -- schema:drop",
     "prebuild": "rimraf dist",
     "build": "nest build",
