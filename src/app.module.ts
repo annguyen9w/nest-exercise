@@ -2,6 +2,7 @@ import { Module, MiddlewareConsumer } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import * as Joi from 'joi'
 import { MulterModule } from '@nestjs/platform-express'
+import { TerminusModule } from '@nestjs/terminus'
 
 // import { APP_GUARD } from '@nestjs/core'
 import { appConfig } from './app.config'
@@ -9,7 +10,7 @@ import { appConfig } from './app.config'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
-// import { DatabaseModule } from './database/database.module'
+import { DatabaseModule } from './database/database.module'
 import { LoggerModule } from './logger/logger.module'
 import LogsMiddleware from './utils/logs.middleware'
 
@@ -27,10 +28,11 @@ import LogsMiddleware from './utils/logs.middleware'
 import { AccountModule } from './app/account/account.module'
 import { ContactModule } from './app/contact/contact.module'
 import { CountryModule } from './app/country/country.module'
+import { HealthController } from './health/health.controller'
 
 @Module({
   imports: [
-    // DatabaseModule,
+    DatabaseModule,
     LoggerModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
@@ -57,7 +59,8 @@ import { CountryModule } from './app/country/country.module'
     // UserModule,
     AccountModule,
     ContactModule,
-    CountryModule
+    CountryModule,
+    TerminusModule
     // AutomapperModule.forRoot({
     //   options: [{
     //     name: 'classMapper',
@@ -67,7 +70,7 @@ import { CountryModule } from './app/country/country.module'
     //   singular: true
     // })
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [
     AppService
     // {
