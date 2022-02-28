@@ -34,6 +34,7 @@ async function bootstrap() {
   }
 
   app.enableCors()
+  console.log('appConfig.getPort()', appConfig.getPort())
   await app.listen(appConfig.getPort())
 }
 bootstrap()

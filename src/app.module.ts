@@ -10,7 +10,7 @@ import { appConfig } from './app.config'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
-import { DatabaseModule } from './database/database.module'
+// import { DatabaseModule } from './database/database.module'
 import { LoggerModule } from './logger/logger.module'
 import LogsMiddleware from './utils/logs.middleware'
 
@@ -32,7 +32,7 @@ import { HealthController } from './health/health.controller'
 
 @Module({
   imports: [
-    DatabaseModule,
+    // DatabaseModule,
     LoggerModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({

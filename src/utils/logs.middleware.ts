@@ -20,6 +20,10 @@ class LogsMiddleware implements NestMiddleware {
         return this.logger.warn(message)
       }
 
+      if (originalUrl.includes('health')) {
+        return this.logger.debug(message)
+      }
+
       return this.logger.log(message)
     })
 
