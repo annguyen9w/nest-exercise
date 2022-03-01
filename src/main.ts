@@ -32,7 +32,7 @@ async function bootstrap() {
       .addTag('races')
       .addTag('race-results')
       .build())
-    SwaggerModule.setup('api', app, document)
+    SwaggerModule.setup('api', app, document) // NOTE: access the Swagger documentation at "/api"
   }
 
   app.enableCors()
