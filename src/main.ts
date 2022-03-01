@@ -15,7 +15,7 @@ async function bootstrap() {
     defaultVersion: appConfig.getApiVersion()
   })
 
-  logger.debug(`appConfig.isProduction(): ${appConfig.isProduction()}`)
+  logger.debug(`isProduction: ${appConfig.isProduction()} --- isDebug: ${appConfig.isDebug()}`)
   if (!appConfig.isProduction()) {
     const document = SwaggerModule.createDocument(app, new DocumentBuilder()
       .setTitle('Mazi API')

@@ -4,7 +4,7 @@ import { MzLogger } from '../logger/logger.service'
 const healthCheckQueryString = 'SELECT 1'
 
 class DatabaseLogger implements TypeOrmLogger {
-  private readonly logger = new MzLogger('Mazi-DB')
+  private readonly logger = new MzLogger('SQL')
 
   private skipLoggingCheck(query: string, parameters?: unknown[], queryRunner?: QueryRunner): boolean {
     if (queryRunner?.data?.isCreatingLogs) {
