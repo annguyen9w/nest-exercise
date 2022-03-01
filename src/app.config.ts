@@ -24,6 +24,11 @@ export class AppConfig {
     return this.getValue('PORT', true)
   }
 
+  public getGlobalPrefix() {
+    // return this.getValue('API_PREFIX', true)
+    return 'api'
+  }
+
   public getApiVersion() {
     return this.getValue('API_VERSION', true)
   }

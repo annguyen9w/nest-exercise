@@ -1,4 +1,8 @@
-import { Module, MiddlewareConsumer } from '@nestjs/common'
+import {
+  Module,
+  // RequestMethod,
+  MiddlewareConsumer
+} from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import * as Joi from 'joi'
 import { MulterModule } from '@nestjs/platform-express'
@@ -84,7 +88,8 @@ export class AppModule {
     consumer
       .apply(LogsMiddleware)
       .exclude(
-        'health'
+        // { path: '/api/v1.0/health', method: RequestMethod.GET }
+        appConfig.isVerbose() ? '' : `/${appConfig.getGlobalPrefix()}/v${appConfig.getApiVersion()}/health`
       )
       .forRoutes('*')
   }

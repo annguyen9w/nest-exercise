@@ -9,13 +9,13 @@ async function bootstrap() {
   const logger = new MzLogger('Bootstrap')
 
   const app = await NestFactory.create(AppModule, { logger: appConfig.isVerbose() ? logger : false })
-  app.setGlobalPrefix('api') // http://localhost:3000/api/...
+  app.setGlobalPrefix(appConfig.getGlobalPrefix()) // http://localhost:3000/api/...
   app.enableVersioning({ // http://localhost:3000/api/v1.0/...
     type: VersioningType.URI,
     defaultVersion: appConfig.getApiVersion()
   })
 
-  logger.debug(`isProduction: ${appConfig.isProduction()} --- isDebug: ${appConfig.isDebug()}`)
+  logger.debug(`isProduction: ${appConfig.isProduction()} --- isDebug: ${appConfig.isDebug()} --- isVerbose: ${appConfig.isVerbose()}`)
   if (!appConfig.isProduction()) {
     const document = SwaggerModule.createDocument(app, new DocumentBuilder()
       .setTitle('Mazi API')
