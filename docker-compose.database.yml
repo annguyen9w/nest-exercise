@@ -16,3 +16,8 @@ services:
     ports:
       - "${POSTGRES_PORT-5432}:5432"
     restart: always
+
+networks:
+  default:
+    external:
+      name: nginx-proxy-net

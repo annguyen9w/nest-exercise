@@ -1,19 +1,14 @@
 import {
   InsertResult, UpdateResult, DeleteResult, Repository
 } from 'typeorm'
-import { EntityId } from 'typeorm/repository/EntityId'
-import { LoggerService } from '../../logger/custom.logger'
+import type { EntityId } from 'typeorm/repository/EntityId'
+import { MzLogger } from '../../logger/logger.service'
 import { User } from '../../user/user.entity'
 
 export class BaseService<T> {
-  protected readonly repository: Repository<T>
+  protected readonly logger = new MzLogger(this.constructor.name)
 
-  protected readonly logger: LoggerService
-
-  constructor(repository: Repository<T>, logger: LoggerService) {
-    this.repository = repository
-    this.logger = logger
-  }
+  constructor(protected readonly repository: Repository<T>) {}
 
   create(entity: T | Array<T>, createdBy: User): Promise<InsertResult> {
     const entities = Array.isArray(entity) ? entity : [entity]

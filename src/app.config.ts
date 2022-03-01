@@ -30,7 +30,11 @@ export class AppConfig {
 
   public isProduction() {
     const mode = this.getValue('MODE', false)
-    return mode !== 'DEV'
+    return mode === 'PROD' || process.env.NODE_ENV === 'production'
+  }
+
+  public isDebug() {
+    return this.getValue('DEBUG', false) === 'true'
   }
 
   public getTypeOrmConfig(): TypeOrmModuleOptions {

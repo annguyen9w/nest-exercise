@@ -4,27 +4,27 @@ import * as Joi from 'joi'
 import { MulterModule } from '@nestjs/platform-express'
 import { TerminusModule } from '@nestjs/terminus'
 
-// import { APP_GUARD } from '@nestjs/core'
+import { APP_GUARD } from '@nestjs/core'
 import { appConfig } from './app.config'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
-// import { DatabaseModule } from './database/database.module'
+import { DatabaseModule } from './database/database.module'
 import { LoggerModule } from './logger/logger.module'
-import LogsMiddleware from './utils/logs.middleware'
+import LogsMiddleware from './logger/logger.middleware'
 
-// import { UserModule } from './user/user.module'
-// import { AuthModule } from './auth/auth.module'
-// import { JwtAuthGuard } from './auth/jwt-auth.guard'
+import { UserModule } from './user/user.module'
+import { AuthModule } from './auth/auth.module'
+import { JwtAuthGuard } from './auth/jwt-auth.guard'
 
-// import { AddressModule } from './app/address/address.module'
-// import { CarModule } from './app/car/car.module'
-// import { ClassModule } from './app/class/class.module'
-// import { DriverModule } from './app/driver/driver.module'
-// import { RaceModule } from './app/race/race.module'
-// import { TeamModule } from './app/team/team.module'
-// import { RaceResultModule } from './app/race-result/race-result.module'
+import { AddressModule } from './app/address/address.module'
+import { CarModule } from './app/car/car.module'
+import { ClassModule } from './app/class/class.module'
+import { DriverModule } from './app/driver/driver.module'
+import { RaceModule } from './app/race/race.module'
+import { TeamModule } from './app/team/team.module'
+import { RaceResultModule } from './app/race-result/race-result.module'
 import { AccountModule } from './app/account/account.module'
 import { ContactModule } from './app/contact/contact.module'
 import { CountryModule } from './app/country/country.module'
@@ -32,7 +32,7 @@ import { HealthController } from './health/health.controller'
 
 @Module({
   imports: [
-    // DatabaseModule,
+    DatabaseModule,
     LoggerModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
@@ -48,15 +48,15 @@ import { HealthController } from './health/health.controller'
       })
     }),
     MulterModule.register(),
-    // CarModule,
-    // AddressModule,
-    // ClassModule,
-    // DriverModule,
-    // RaceModule,
-    // TeamModule,
-    // RaceResultModule,
-    // AuthModule,
-    // UserModule,
+    CarModule,
+    AddressModule,
+    ClassModule,
+    DriverModule,
+    RaceModule,
+    TeamModule,
+    RaceResultModule,
+    AuthModule,
+    UserModule,
     AccountModule,
     ContactModule,
     CountryModule,
@@ -72,11 +72,11 @@ import { HealthController } from './health/health.controller'
   ],
   controllers: [AppController, HealthController],
   providers: [
-    AppService
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtAuthGuard
-    // }
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard
+    }
   ]
 })
 export class AppModule {
