@@ -1,25 +1,37 @@
 import { Logger as TypeOrmLogger, QueryRunner } from 'typeorm'
-import { Logger as NestLogger } from '@nestjs/common'
+import { MzLogger } from '../logger/logger.service'
+
+const healthCheckQueryString = 'SELECT 1'
 
 class DatabaseLogger implements TypeOrmLogger {
-  private readonly logger = new NestLogger('SQL')
+  private readonly logger = new MzLogger('Mazi-DB')
+
+  private skipLoggingCheck(query: string, parameters?: unknown[], queryRunner?: QueryRunner): boolean {
+    if (queryRunner?.data?.isCreatingLogs) {
+      return true
+    }
+    if (query === healthCheckQueryString) {
+      return true
+    }
+    return false
+  }
 
   logQuery(query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
-    if (queryRunner?.data?.isCreatingLogs) {
+    if (this.skipLoggingCheck(query, parameters, queryRunner)) {
       return
     }
     this.logger.log(`${query} -- Parameters: ${this.stringifyParameters(parameters)}`)
   }
 
   logQueryError(error: string, query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
-    if (queryRunner?.data?.isCreatingLogs) {
+    if (this.skipLoggingCheck(query, parameters, queryRunner)) {
       return
     }
     this.logger.error(`${query} -- Parameters: ${this.stringifyParameters(parameters)} -- ${error}`)
   }
 
   logQuerySlow(time: number, query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
-    if (queryRunner?.data?.isCreatingLogs) {
+    if (this.skipLoggingCheck(query, parameters, queryRunner)) {
       return
     }
     this.logger.warn(`Time: ${time} -- Parameters: ${this.stringifyParameters(parameters)} -- ${query}`)

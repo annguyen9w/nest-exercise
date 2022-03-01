@@ -52,4 +52,11 @@ export class MzLogger extends ConsoleLogger implements LoggerService {
     this.loggingSaving(allTheArgs)
     super.verbose(allTheArgs)
   }
+
+  showHealth(...allTheArgs): void {
+    if (appConfig.isVerbose()) {
+      this.loggingSaving(allTheArgs)
+      super.verbose(allTheArgs)
+    }
+  }
 }

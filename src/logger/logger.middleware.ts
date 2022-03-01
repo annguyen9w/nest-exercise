@@ -5,9 +5,7 @@ import { MzLogger } from './logger.service'
 
 @Injectable()
 class LogsMiddleware implements NestMiddleware {
-  constructor(protected readonly logger: MzLogger) {
-    this.logger.setContext('HTTP')
-  }
+  protected readonly logger = new MzLogger('HTTP')
 
   use(request: Request, response: Response, next: NextFunction) {
     response.on('finish', () => {
@@ -25,7 +23,7 @@ class LogsMiddleware implements NestMiddleware {
       }
 
       if (originalUrl.includes('health')) {
-        return this.logger.debug(message)
+        return this.logger.showHealth(message)
       }
 
       return this.logger.log(message)

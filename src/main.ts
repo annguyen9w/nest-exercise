@@ -8,7 +8,7 @@ import { MzLogger } from './logger/logger.service'
 async function bootstrap() {
   const logger = new MzLogger('Bootstrap')
 
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, { logger: appConfig.isVerbose() ? logger : false })
   app.setGlobalPrefix('api') // http://localhost:3000/api/...
   app.enableVersioning({ // http://localhost:3000/api/v1.0/...
     type: VersioningType.URI,

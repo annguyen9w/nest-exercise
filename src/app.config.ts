@@ -37,6 +37,10 @@ export class AppConfig {
     return this.getValue('DEBUG', false) === 'true'
   }
 
+  public isVerbose() {
+    return this.getValue('VERBOSE', false) === 'true'
+  }
+
   public getTypeOrmConfig(): TypeOrmModuleOptions {
     return {
       type: 'postgres',

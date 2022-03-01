@@ -83,6 +83,9 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LogsMiddleware)
+      .exclude(
+        'health'
+      )
       .forRoutes('*')
   }
 }
