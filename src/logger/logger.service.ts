@@ -15,7 +15,7 @@ export class MzLogger extends ConsoleLogger implements LoggerService {
   ) {
     super(context, options)
     // super.debug(`isProduction: ${appConfig.isProduction()} --- isDebug: ${appConfig.isDebug()}`)
-    if (!(!appConfig.isProduction() || appConfig.isDebug())) {
+    if (!appConfig.isDebug()) {
       const lvs: LogLevel[] = ['error', 'warn', 'log']
       super.warn(`get rid of "verbose" and "debug" logs on production, only ${lvs} logs will be shown`)
       super.setLogLevels(lvs)
@@ -54,7 +54,7 @@ export class MzLogger extends ConsoleLogger implements LoggerService {
   }
 
   showHealth(...allTheArgs): void {
-    // if (appConfig.isVerbose()) {
+    // if (appConfig.showHealthLogs()) {
     this.loggingSaving(allTheArgs)
     super.verbose(allTheArgs)
     // }

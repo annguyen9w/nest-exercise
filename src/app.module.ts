@@ -89,7 +89,7 @@ export class AppModule {
       .apply(LogsMiddleware)
       .exclude(
         // { path: '/api/v1.0/health', method: RequestMethod.GET }
-        appConfig.isVerbose() ? '' : `/${appConfig.getGlobalPrefix()}/v${appConfig.getApiVersion()}/health`
+        appConfig.showHealthLogs() ? '' : `/${appConfig.getGlobalPrefix()}/v${appConfig.getApiVersion()}/health`
       )
       .forRoutes('*')
   }

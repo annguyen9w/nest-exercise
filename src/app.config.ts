@@ -46,6 +46,10 @@ export class AppConfig {
     return this.getValue('VERBOSE', false) === 'true'
   }
 
+  public showHealthLogs() {
+    return this.getValue('SHOW_HEALTH_LOGS', false) === 'true'
+  }
+
   public getTypeOrmConfig(): TypeOrmModuleOptions {
     return {
       type: 'postgres',

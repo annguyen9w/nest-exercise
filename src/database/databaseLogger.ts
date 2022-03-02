@@ -1,20 +1,11 @@
-import { Logger as TypeOrmLogger, QueryRunner } from 'typeorm'
+import type { Logger as TypeOrmLogger, QueryRunner } from 'typeorm'
 import { MzLogger } from '../logger/logger.service'
+import { appConfig } from '../app.config'
 
 const healthCheckQueryString = 'SELECT 1'
 
 class DatabaseLogger implements TypeOrmLogger {
   private readonly logger = new MzLogger('SQL')
-
-  private skipLoggingCheck(query: string, parameters?: unknown[], queryRunner?: QueryRunner): boolean {
-    if (queryRunner?.data?.isCreatingLogs) {
-      return true
-    }
-    if (query === healthCheckQueryString) {
-      return true
-    }
-    return false
-  }
 
   logQuery(query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
     if (this.skipLoggingCheck(query, parameters, queryRunner)) {
@@ -68,6 +59,16 @@ class DatabaseLogger implements TypeOrmLogger {
     } catch {
       return ''
     }
+  }
+
+  private skipLoggingCheck(query: string, parameters?: unknown[], queryRunner?: QueryRunner): boolean {
+    if (queryRunner?.data?.isCreatingLogs) {
+      return true
+    }
+    if (!appConfig.showHealthLogs() && query === healthCheckQueryString) {
+      return true
+    }
+    return false
   }
 }
 
