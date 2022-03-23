@@ -1,51 +1,32 @@
 import {
-  PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, BaseEntity as SuperBaseEntity, ManyToOne
+  PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, BaseEntity as SuperBaseEntity
 } from 'typeorm'
-import { User } from '../../user/user.entity'
 
 export abstract class BaseEntity extends SuperBaseEntity {
   @PrimaryGeneratedColumn('uuid')
-    id?: string
+    id: string
 
-  @Column({ type: 'boolean', default: true })
-    isActive?: boolean
-
-  @Column({ type: 'boolean', default: false })
-    isArchived?: boolean
-
-  // @Column({
-  //   type: 'timestamptz',
-  //   update: false,
-  //   default: () => 'CURRENT_TIMESTAMP'
-  // })
-  //   createdTime: Date
-
-  // @Column({
-  //   type: 'timestamptz',
-  //   default: () => 'CURRENT_TIMESTAMP',
-  //   onUpdate: 'now()'
-  // })
-  //   updatedTime: Date
+  @Column('text')
+    creationAccountName: string
 
   @CreateDateColumn({
     type: 'timestamptz',
     default: 'now()' // default: () => 'CURRENT_TIMESTAMP'
-    // nullable: true
   })
-    createdAt?: Date
+    creationHostTimestamp: Date
+
+  @Column('text', { nullable: true })
+    modificationAccountName: string
 
   @UpdateDateColumn({
     type: 'timestamptz',
     default: 'now()' // default: () => 'CURRENT_TIMESTAMP'
-    // nullable: true
   })
-    modifiedAt?: Date
+    modificationHostTimestamp: Date
 
-  @ManyToOne(() => User, (user) => user.id)
-    createdBy: User
-
-  @ManyToOne(() => User, (user) => user.id, {
-    nullable: true
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: 'now()' // default: () => 'CURRENT_TIMESTAMP'
   })
-    modifiedBy: User
+    modificationTimestamp: Date
 }

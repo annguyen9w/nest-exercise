@@ -1,16 +1,16 @@
 import 'automapper-ts'
 import { Injectable } from '@nestjs/common'
 
-import { User } from '../../user/user.entity'
-import { CreateUserDto } from '../../user/dto/create-user.dto'
+// import { User } from '../../user/user.entity'
+// import { CreateUserDto } from '../../user/dto/create-user.dto'
 
-import { Address } from '../address/address.entity'
-import { CreateAddressDto } from '../address/dto/create-address.dto'
-import { UpdateAddressDto } from '../address/dto/update-address.dto'
+// import { Address } from '../address/address.entity'
+// import { CreateAddressDto } from '../address/dto/create-address.dto'
+// import { UpdateAddressDto } from '../address/dto/update-address.dto'
 
-import { Class } from '../class/class.entity'
-import { CreateClassDto } from '../class/dto/create-class.dto'
-import { UpdateClassDto } from '../class/dto/update-class.dto'
+// import { Class } from '../class/class.entity'
+// import { CreateClassDto } from '../class/dto/create-class.dto'
+// import { UpdateClassDto } from '../class/dto/update-class.dto'
 
 // import { Team } from './team/entities/team.entity'
 // import { TeamModel } from './team/dto/team.dto'
@@ -63,59 +63,59 @@ class Mapper {
     ]
   }
 
-  constructor() {
-    // Add code here to configure mappings
-    this.createDefaultBiDiMap(
-      CreateAddressDto,
-      Address,
-      ['id', 'name', 'street', 'street2', 'city', 'state', 'zip', 'country']
-    )
-    this.createDefaultBiDiMap(
-      UpdateAddressDto,
-      Address,
-      ['id', 'name', 'street', 'street2', 'city', 'state', 'zip', 'country']
-    )
-    this.createDefaultBiDiMap(
-      CreateUserDto,
-      User,
-      ['id', 'email', 'firstName', 'lastName', 'password']
-    )
-    this.createDefaultBiDiMap(
-      CreateClassDto,
-      Class,
-      ['id', 'name']
-    )
-    this.createDefaultBiDiMap(
-      UpdateClassDto,
-      Class,
-      ['id', 'name']
-    )
-    // this.createDefaultBiDiMap(
-    //     TeamModel,
-    //     Team,
-    //     ['id', 'name', 'nationality', 'businessAddress', 'cars']
-    // )
-    // this.createDefaultBiDiMap(
-    //     DriverModel,
-    //     Driver,
-    //     ['id', 'firstName', 'lastName', 'nationality', 'homeAddress', 'managementAddress', 'teams', 'results']
-    // )
-    // this.createDefaultBiDiMap(
-    //     CarModel,
-    //     Car,
-    //     ['id', 'name', 'make', 'model', 'class', 'team', 'results']
-    // )
-    // this.createDefaultBiDiMap(
-    //     RaceModel,
-    //     Race,
-    //     ['id', 'name', 'results']
-    // )
-    // this.createDefaultBiDiMap(
-    //     RaceResultModel,
-    //     RaceResult,
-    //     ['id', 'car', 'carNumber', 'race', 'driver', 'class', 'startingPosition', 'finishingPosition', 'isFinished']
-    // )
-  }
+  // constructor() {
+  //   // Add code here to configure mappings
+  //   this.createDefaultBiDiMap(
+  //     CreateAddressDto,
+  //     Address,
+  //     ['id', 'name', 'street', 'street2', 'city', 'state', 'zip', 'country']
+  //   )
+  //   this.createDefaultBiDiMap(
+  //     UpdateAddressDto,
+  //     Address,
+  //     ['id', 'name', 'street', 'street2', 'city', 'state', 'zip', 'country']
+  //   )
+  //   this.createDefaultBiDiMap(
+  //     CreateUserDto,
+  //     User,
+  //     ['id', 'email', 'firstName', 'lastName', 'password']
+  //   )
+  //   this.createDefaultBiDiMap(
+  //     CreateClassDto,
+  //     Class,
+  //     ['id', 'name']
+  //   )
+  //   this.createDefaultBiDiMap(
+  //     UpdateClassDto,
+  //     Class,
+  //     ['id', 'name']
+  //   )
+  //   // this.createDefaultBiDiMap(
+  //   //     TeamModel,
+  //   //     Team,
+  //   //     ['id', 'name', 'nationality', 'businessAddress', 'cars']
+  //   // )
+  //   // this.createDefaultBiDiMap(
+  //   //     DriverModel,
+  //   //     Driver,
+  //   //     ['id', 'firstName', 'lastName', 'nationality', 'homeAddress', 'managementAddress', 'teams', 'results']
+  //   // )
+  //   // this.createDefaultBiDiMap(
+  //   //     CarModel,
+  //   //     Car,
+  //   //     ['id', 'name', 'make', 'model', 'class', 'team', 'results']
+  //   // )
+  //   // this.createDefaultBiDiMap(
+  //   //     RaceModel,
+  //   //     Race,
+  //   //     ['id', 'name', 'results']
+  //   // )
+  //   // this.createDefaultBiDiMap(
+  //   //     RaceResultModel,
+  //   //     RaceResult,
+  //   //     ['id', 'car', 'carNumber', 'race', 'driver', 'class', 'startingPosition', 'finishingPosition', 'isFinished']
+  //   // )
+  // }
 
   public map(source: any, destination: any, value: any): any {
     const obj = automapper.map(source, destination, value)
