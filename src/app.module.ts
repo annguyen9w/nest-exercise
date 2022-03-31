@@ -19,7 +19,7 @@ import { LoggerModule } from './logger/logger.module'
 import LogsMiddleware from './logger/logger.middleware'
 
 // import { UserModule } from './user/user.module'
-// import { AuthModule } from './auth/auth.module'
+import { AuthModule } from './auth/auth.module'
 import { JwtAuthGuard } from './auth/jwt-auth.guard'
 
 // import { AddressModule } from './app/address/address.module'
@@ -64,7 +64,9 @@ import { LocationModule } from './app/location/location.module'
     ContactMethodModule,
     DocumentModule,
     EntityModule,
-    LocationModule
+    LocationModule,
+
+    AuthModule
 
     // CarModule,
     // AddressModule,
@@ -73,7 +75,6 @@ import { LocationModule } from './app/location/location.module'
     // RaceModule,
     // TeamModule,
     // RaceResultModule,
-    // AuthModule,
     // UserModule,
     // AccountModule,
     // ContactModule,
