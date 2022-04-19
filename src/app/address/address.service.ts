@@ -5,10 +5,11 @@ import { Repository } from 'typeorm'
 import { Address } from './address.entity'
 
 import { BaseService } from '../common/base.service'
+import { MzLogger } from '../../logger/logger.service'
 
 @Injectable()
 export class AddressService extends BaseService<Address> {
-  constructor(@InjectRepository(Address) private readonly repo: Repository<Address>) {
-    super(repo)
+  constructor(@InjectRepository(Address) private readonly repo: Repository<Address>, logger: MzLogger) {
+    super(repo, logger)
   }
 }

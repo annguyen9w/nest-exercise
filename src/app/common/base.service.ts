@@ -6,9 +6,13 @@ import { MzLogger } from '../../logger/logger.service'
 import { User } from '../../user/user.entity'
 
 export class BaseService<T> {
-  protected readonly logger = new MzLogger(this.constructor.name)
-
-  constructor(protected readonly repository: Repository<T>) {}
+  constructor(
+    protected readonly repository: Repository<T>,
+    private logger: MzLogger
+  ) {
+    this.logger.setContext(this.constructor.name)
+  }
+  // protected readonly logger = new MzLogger(this.constructor.name)
 
   create(entity: T | Array<T>, createdBy: User): Promise<InsertResult> {
     const entities = Array.isArray(entity) ? entity : [entity]

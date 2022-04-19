@@ -16,11 +16,11 @@ import { LoggerModule } from './logger/logger.module'
 import { UserModule } from './user/user.module'
 
 import { JwtAuthGuard } from './auth/jwt-auth.guard'
-import { LogsMiddleware } from './logger/logger.middleware'
+import { LoggerMiddleware } from './logger/logger.middleware'
 // #endregion Import outside app modules
 
 // #region Import inside app modules
-// import { AddressModule } from './app/address/address.module'
+import { AddressModule } from './app/address/address.module'
 // import { CarModule } from './app/car/car.module'
 // import { ClassModule } from './app/class/class.module'
 // import { DriverModule } from './app/driver/driver.module'
@@ -54,11 +54,11 @@ import { LogsMiddleware } from './logger/logger.middleware'
     DatabaseModule,
     HealthModule,
     LoggerModule,
-    UserModule
+    UserModule,
 
     // App Module
     // CarModule,
-    // AddressModule,
+    AddressModule
     // ClassModule,
     // DriverModule,
     // RaceModule,
@@ -89,7 +89,7 @@ import { LogsMiddleware } from './logger/logger.middleware'
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(LogsMiddleware)
+      .apply(LoggerMiddleware)
       .exclude(
         // NOTE: action why?
         { path: 'health', method: RequestMethod.GET }

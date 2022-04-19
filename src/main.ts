@@ -7,10 +7,12 @@ import { MzLogger } from './logger/logger.service'
 import { AppConfigService } from './app.config-service'
 
 async function bootstrap() {
-  const logger = new MzLogger('Bootstrap')
+  const logger = new MzLogger()
+  logger.setContext('BOOTSTRAP')
 
   const app = await NestFactory.create(AppModule, { bufferLogs: true })
   const appConfigService = app.get<AppConfigService>(AppConfigService)
+  // app.useLogger(app.get(Logger))
   app.useLogger(appConfigService.isVerbose ? logger : false)
 
   app.setGlobalPrefix(appConfigService.getGlobalPrefix) // http://localhost:3000/api/...
@@ -19,7 +21,7 @@ async function bootstrap() {
     defaultVersion: appConfigService.getApiVersion
   })
 
-  logger.debug(`isProduction: ${appConfigService.isProduction} --- isDebug: ${appConfigService.isDebug} --- isVerbose: ${appConfigService.isVerbose} --- isHealthCheck: ${appConfigService.showHealthLogs}`)
+  // logger.debug(`isProduction: ${appConfigService.isProduction} --- isDebug: ${appConfigService.isDebug} --- isVerbose: ${appConfigService.isVerbose} --- isHealthCheck: ${appConfigService.showHealthLogs}`)
   if (!appConfigService.isProduction) {
     const document = SwaggerModule.createDocument(app, new DocumentBuilder()
       .setTitle('Mazi API')
@@ -31,7 +33,7 @@ async function bootstrap() {
   }
 
   app.enableCors()
-  logger.debug(`APP PORT: ${appConfigService.getPort}`)
+  // logger.debug(`APP PORT: ${appConfigService.getPort}`)
   await app.listen(appConfigService.getPort)
 }
 bootstrap()

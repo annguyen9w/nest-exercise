@@ -2,25 +2,25 @@ import {
   ConsoleLogger, LoggerService,
   Injectable, Scope
 } from '@nestjs/common'
-// import type { LogLevel } from '@nestjs/common'
-// import { appConfig } from '../app.config'
+import type { LogLevel } from '@nestjs/common'
+import { appConfig } from '../app.config'
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class MzLogger extends ConsoleLogger implements LoggerService {
-  // constructor(
-  //   context: string,
-  //   options?: {
-  //     timestamp?: boolean;
-  //   }
-  // ) {
-  //   super(context, options)
-  //   // super.debug(`isProduction: ${appConfig.isProduction()} --- isDebug: ${appConfig.isDebug()}`)
-  //   if (!appConfig.isDebug()) {
-  //     const lvs: LogLevel[] = ['error', 'warn', 'log']
-  //     super.warn(`get rid of "verbose" and "debug" logs on production, only ${lvs} logs will be shown`)
-  //     super.setLogLevels(lvs)
-  //   }
-  // }
+  constructor(
+    context: string,
+    options?: {
+      timestamp?: boolean;
+    }
+  ) {
+    super(context, options)
+    // super.debug(`isProduction: ${appConfig.isProduction()} --- isDebug: ${appConfig.isDebug()}`)
+    if (!appConfig.isDebug()) {
+      const lvs: LogLevel[] = ['error', 'warn', 'log']
+      super.warn(`get rid of "verbose" and "debug" logs on production, only ${lvs} logs will be shown`)
+      super.setLogLevels(lvs)
+    }
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private loggingSaving(...allTheArgs): void {

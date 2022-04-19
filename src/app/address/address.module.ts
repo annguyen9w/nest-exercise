@@ -5,9 +5,10 @@ import { AddressController } from './address.controller'
 import { Address } from './address.entity'
 
 import { Mapper } from '../common/mapper'
+import { LoggerModule } from '../../logger/logger.module'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Address])],
+  imports: [TypeOrmModule.forFeature([Address]), LoggerModule],
   controllers: [AddressController],
   providers: [
     AddressService,

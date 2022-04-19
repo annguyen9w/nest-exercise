@@ -1,11 +1,13 @@
 import { Injectable, NestMiddleware } from '@nestjs/common'
 import { Request, Response, NextFunction } from 'express'
-
 import { MzLogger } from './logger.service'
 
 @Injectable()
-export class LogsMiddleware implements NestMiddleware {
-  protected readonly logger = new MzLogger('HTTP')
+export class LoggerMiddleware implements NestMiddleware {
+  // protected readonly logger = new MzLogger('HTTP')
+  constructor(private logger: MzLogger) {
+    this.logger.setContext('HTTP')
+  }
 
   use(request: Request, response: Response, next: NextFunction) {
     response.on('finish', () => {

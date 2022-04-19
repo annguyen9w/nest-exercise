@@ -1,11 +1,19 @@
-import type { Logger as TypeOrmLogger, QueryRunner } from 'typeorm'
-import { MzLogger } from '../logger/logger.service'
-import { appConfig } from '../app.config'
+import type { Logger, QueryRunner } from 'typeorm'
+import { Injectable } from '@nestjs/common'
+import { MzLogger } from './logger.service'
+import { AppConfigService } from '../app.config-service'
 
 const healthCheckQueryString = 'SELECT 1'
 
-class DatabaseLogger implements TypeOrmLogger {
-  private readonly logger = new MzLogger('SQL')
+@Injectable()
+export class LoggerDatabase implements Logger {
+  constructor(
+    private logger: MzLogger,
+    private appConfigService: AppConfigService
+  ) {
+    this.logger.setContext('SQL')
+  }
+  // private readonly logger = new MzLogger('SQL')
 
   logQuery(query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
     if (this.skipLoggingCheck(query, parameters, queryRunner)) {
@@ -65,11 +73,9 @@ class DatabaseLogger implements TypeOrmLogger {
     if (queryRunner?.data?.isCreatingLogs) {
       return true
     }
-    if (!appConfig.showHealthLogs() && query === healthCheckQueryString) {
+    if (!this.appConfigService.showHealthLogs && query === healthCheckQueryString) {
       return true
     }
     return false
   }
 }
-
-export default DatabaseLogger
