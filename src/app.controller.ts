@@ -1,8 +1,9 @@
 import {
-  Controller, Get, Post, UseGuards, Request, UsePipes, HttpCode, HttpStatus
+  Controller, Get, Post, UseGuards, Request, UsePipes, HttpCode, HttpStatus, BadRequestException
 } from '@nestjs/common'
 import * as Joi from 'joi'
 import { ApiOkResponse, ApiTags, ApiBody } from '@nestjs/swagger'
+
 import { AppService } from './app.service'
 import { AuthService } from './auth/auth.service'
 import { LocalAuthGuard } from './auth/local-auth.guard'
@@ -16,9 +17,15 @@ export class AppController {
     private readonly authService: AuthService
   ) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello()
+  @MzPublic()
+  @ApiTags()
+  @Get('hello')
+  async getHello() {
+    try {
+      return this.appService.getHello()
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
   }
 
   @ApiTags('authen')
@@ -48,11 +55,14 @@ export class AppController {
       password: Joi.string().required()
     })
   }))
-  // eslint-disable-next-line class-methods-use-this
   @UseGuards(LocalAuthGuard)
   @MzPublic()
   @HttpCode(HttpStatus.OK)
-  async login(@Request() req) {
-    return this.authService.login(req.user)
+  login(@Request() req) {
+    try {
+      return this.authService.login(req.user)
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
   }
 }

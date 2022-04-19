@@ -1,10 +1,10 @@
 import { Controller, Get } from '@nestjs/common'
 import {
-  HealthCheckService,
-  TypeOrmHealthIndicator,
-  MemoryHealthIndicator,
   // DiskHealthIndicator,
-  HealthCheck
+  HealthCheck,
+  HealthCheckService,
+  MemoryHealthIndicator,
+  TypeOrmHealthIndicator
 } from '@nestjs/terminus'
 import { MzPublic } from '../app/common/decorator/public.decorator'
 

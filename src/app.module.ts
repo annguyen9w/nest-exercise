@@ -1,27 +1,25 @@
-import {
-  Module,
-  // RequestMethod,
-  MiddlewareConsumer
-} from '@nestjs/common'
+import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import * as Joi from 'joi'
-import { MulterModule } from '@nestjs/platform-express'
-import { TerminusModule } from '@nestjs/terminus'
-
 import { APP_GUARD } from '@nestjs/core'
-import { appConfig } from './app.config'
+import { MulterModule } from '@nestjs/platform-express'
+import * as Joi from 'joi'
 
+import { AppConfigService } from './app.config-service'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
-import { DatabaseModule } from './database/database.module'
-import { LoggerModule } from './logger/logger.module'
-import { LogsMiddleware } from './logger/logger.middleware'
-
-import { UserModule } from './user/user.module'
+// #region Import outside app modules
 import { AuthModule } from './auth/auth.module'
-import { JwtAuthGuard } from './auth/jwt-auth.guard'
+import { DatabaseModule } from './database/database.module'
+import { HealthModule } from './health/health.module'
+import { LoggerModule } from './logger/logger.module'
+import { UserModule } from './user/user.module'
 
+import { JwtAuthGuard } from './auth/jwt-auth.guard'
+import { LogsMiddleware } from './logger/logger.middleware'
+// #endregion Import outside app modules
+
+// #region Import inside app modules
 // import { AddressModule } from './app/address/address.module'
 // import { CarModule } from './app/car/car.module'
 // import { ClassModule } from './app/class/class.module'
@@ -32,12 +30,11 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard'
 // import { AccountModule } from './app/account/account.module'
 // import { ContactModule } from './app/contact/contact.module'
 // import { CountryModule } from './app/country/country.module'
-import { HealthController } from './health/health.controller'
+// #endregion Import inside app modules
 
 @Module({
   imports: [
-    DatabaseModule,
-    LoggerModule,
+    // Library Module
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
@@ -51,6 +48,15 @@ import { HealthController } from './health/health.controller'
       })
     }),
     MulterModule.register(),
+
+    // Custom Module
+    AuthModule,
+    DatabaseModule,
+    HealthModule,
+    LoggerModule,
+    UserModule
+
+    // App Module
     // CarModule,
     // AddressModule,
     // ClassModule,
@@ -58,12 +64,9 @@ import { HealthController } from './health/health.controller'
     // RaceModule,
     // TeamModule,
     // RaceResultModule,
-    AuthModule,
-    UserModule,
     // AccountModule,
     // ContactModule,
     // CountryModule,
-    TerminusModule
     // AutomapperModule.forRoot({
     //   options: [{
     //     name: 'classMapper',
@@ -73,9 +76,10 @@ import { HealthController } from './health/health.controller'
     //   singular: true
     // })
   ],
-  controllers: [AppController, HealthController],
+  controllers: [AppController],
   providers: [
     AppService,
+    AppConfigService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard
@@ -87,8 +91,9 @@ export class AppModule {
     consumer
       .apply(LogsMiddleware)
       .exclude(
-        // { path: '/api/v1.0/health', method: RequestMethod.GET }
-        appConfig.showHealthLogs() ? '' : `/${appConfig.getGlobalPrefix()}/v${appConfig.getApiVersion()}/health`
+        // NOTE: action why?
+        { path: 'health', method: RequestMethod.GET }
+        // appConfig.showHealthLogs() ? '' : `/${appConfig.getGlobalPrefix()}/v${appConfig.getApiVersion()}/health`
       )
       .forRoutes('*')
   }
