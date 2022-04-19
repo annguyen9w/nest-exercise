@@ -22,15 +22,6 @@ async function bootstrap() {
       .setDescription('Mazi API\'s documentation')
       .setVersion(appConfig.getApiVersion())
       .addBearerAuth()
-      .addTag('authen')
-      .addTag('users')
-      .addTag('addresses')
-      .addTag('classes')
-      .addTag('teams')
-      .addTag('drivers')
-      .addTag('cars')
-      .addTag('races')
-      .addTag('race-results')
       .build())
     SwaggerModule.setup('api', app, document) // NOTE: access the Swagger documentation at "/api"
   }

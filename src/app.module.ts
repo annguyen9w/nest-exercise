@@ -1,50 +1,42 @@
-import {
-  Module,
-  // RequestMethod,
-  MiddlewareConsumer
-} from '@nestjs/common'
+import { Module, MiddlewareConsumer } from '@nestjs/common' // RequestMethod
 import { ConfigModule } from '@nestjs/config'
-import * as Joi from 'joi'
+import { APP_GUARD } from '@nestjs/core'
 import { MulterModule } from '@nestjs/platform-express'
 import { TerminusModule } from '@nestjs/terminus'
-
-import { APP_GUARD } from '@nestjs/core'
+import * as Joi from 'joi'
 import { appConfig } from './app.config'
 
+// #region Import outside app modules
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-
+import { AuthModule } from './auth/auth.module'
 import { DatabaseModule } from './database/database.module'
-import { LoggerModule } from './logger/logger.module'
-import LogsMiddleware from './logger/logger.middleware'
-
-// import { UserModule } from './user/user.module'
-// import { AuthModule } from './auth/auth.module'
-import { JwtAuthGuard } from './auth/jwt-auth.guard'
-
-// import { AddressModule } from './app/address/address.module'
-// import { CarModule } from './app/car/car.module'
-// import { ClassModule } from './app/class/class.module'
-// import { DriverModule } from './app/driver/driver.module'
-// import { RaceModule } from './app/race/race.module'
-// import { TeamModule } from './app/team/team.module'
-// import { RaceResultModule } from './app/race-result/race-result.module'
-// import { AccountModule } from './app/account/account.module'
-// import { ContactModule } from './app/contact/contact.module'
-// import { CountryModule } from './app/country/country.module'
 import { HealthController } from './health/health.controller'
-import { ActivityModule } from './app/activity/activity.module'
-import { ClientModule } from './app/client/client.module'
-import { ContactMethodModule } from './app/contact-method/contact-method.module'
-import { DocumentModule } from './app/document/document.module'
-import { EntityModule } from './app/entity/entity.module'
-import { LocationModule } from './app/location/location.module'
+import { JwtAuthGuard } from './auth/jwt-auth.guard'
+import { LoggerModule } from './logger/logger.module'
+import { LogsMiddleware } from './logger/logger.middleware'
+import { UserModule } from './user/user.module'
+// #region Import outside app modules
+
+// #region Import inside app modules
+import { ActivitiesModule } from './app/activities/activities.module'
+import { AdvertisersModule } from './app/advertisers/advertisers.module'
+import { BrandsModule } from './app/brands/brands.module'
+import { ClientsModule } from './app/clients/clients.module'
+import { ContactMethodsModule } from './app/contact-methods/contact-methods.module'
+import { DocumentsModule } from './app/documents/documents.module'
+import { EntitiesModule } from './app/entities/entities.module'
+import { EstimateLineItemsModule } from './app/estimate-line-items/estimate-line-items.module'
+import { EstimatesModule } from './app/estimates/estimates.module'
+import { LocationsModule } from './app/locations/locations.module'
+import { PrefixIsciModule } from './app/prefix-isci/prefix-isci.module'
+import { StationsModule } from './app/stations/stations.module'
+import { VendorsModule } from './app/vendors/vendors.module'
+// #endregion Import inside app modules
 
 @Module({
   imports: [
-    DatabaseModule,
-    LoggerModule,
-    TerminusModule,
+    AuthModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),
@@ -58,26 +50,27 @@ import { LocationModule } from './app/location/location.module'
           .default('development')
       })
     }),
+    DatabaseModule,
+    LoggerModule,
     MulterModule.register(),
-    ActivityModule,
-    ClientModule,
-    ContactMethodModule,
-    DocumentModule,
-    EntityModule,
-    LocationModule
+    TerminusModule,
+    UserModule,
 
-    // CarModule,
-    // AddressModule,
-    // ClassModule,
-    // DriverModule,
-    // RaceModule,
-    // TeamModule,
-    // RaceResultModule,
-    // AuthModule,
-    // UserModule,
-    // AccountModule,
-    // ContactModule,
-    // CountryModule,
+    ActivitiesModule,
+    AdvertisersModule,
+    AppModule,
+    BrandsModule,
+    ClientsModule,
+    ContactMethodsModule,
+    DocumentsModule,
+    EntitiesModule,
+    EstimateLineItemsModule,
+    EstimatesModule,
+    LocationsModule,
+    PrefixIsciModule,
+    StationsModule,
+    VendorsModule
+
     // AutomapperModule.forRoot({
     //   options: [{
     //     name: 'classMapper',
@@ -88,13 +81,10 @@ import { LocationModule } from './app/location/location.module'
     // })
   ],
   controllers: [AppController, HealthController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard
-    }
-  ]
+  providers: [AppService, {
+    provide: APP_GUARD,
+    useClass: JwtAuthGuard
+  }]
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
