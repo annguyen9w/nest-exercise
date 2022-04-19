@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express'
 import { MzLogger } from './logger.service'
 
 @Injectable()
-class LogsMiddleware implements NestMiddleware {
+export class LogsMiddleware implements NestMiddleware {
   protected readonly logger = new MzLogger('HTTP')
 
   use(request: Request, response: Response, next: NextFunction) {
@@ -32,5 +32,3 @@ class LogsMiddleware implements NestMiddleware {
     next()
   }
 }
-
-export default LogsMiddleware

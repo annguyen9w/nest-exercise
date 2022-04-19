@@ -16,22 +16,22 @@ import { AppService } from './app.service'
 
 import { DatabaseModule } from './database/database.module'
 import { LoggerModule } from './logger/logger.module'
-import LogsMiddleware from './logger/logger.middleware'
+import { LogsMiddleware } from './logger/logger.middleware'
 
 import { UserModule } from './user/user.module'
 import { AuthModule } from './auth/auth.module'
 import { JwtAuthGuard } from './auth/jwt-auth.guard'
 
-import { AddressModule } from './app/address/address.module'
-import { CarModule } from './app/car/car.module'
-import { ClassModule } from './app/class/class.module'
-import { DriverModule } from './app/driver/driver.module'
-import { RaceModule } from './app/race/race.module'
-import { TeamModule } from './app/team/team.module'
-import { RaceResultModule } from './app/race-result/race-result.module'
-import { AccountModule } from './app/account/account.module'
-import { ContactModule } from './app/contact/contact.module'
-import { CountryModule } from './app/country/country.module'
+// import { AddressModule } from './app/address/address.module'
+// import { CarModule } from './app/car/car.module'
+// import { ClassModule } from './app/class/class.module'
+// import { DriverModule } from './app/driver/driver.module'
+// import { RaceModule } from './app/race/race.module'
+// import { TeamModule } from './app/team/team.module'
+// import { RaceResultModule } from './app/race-result/race-result.module'
+// import { AccountModule } from './app/account/account.module'
+// import { ContactModule } from './app/contact/contact.module'
+// import { CountryModule } from './app/country/country.module'
 import { HealthController } from './health/health.controller'
 
 @Module({
@@ -39,31 +39,30 @@ import { HealthController } from './health/health.controller'
     DatabaseModule,
     LoggerModule,
     ConfigModule.forRoot({
+      isGlobal: true,
       validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),
         POSTGRES_PORT: Joi.number().required(),
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
-        PORT: Joi.number().default(appConfig.getPort()),
-        NODE_ENV: Joi.string()
-          .valid('development', 'production', 'test', 'provision')
-          .default('development')
+        PORT: Joi.number().default(3000),
+        NODE_ENV: Joi.string().valid('development', 'production', 'test', 'provision').default('development')
       })
     }),
     MulterModule.register(),
-    CarModule,
-    AddressModule,
-    ClassModule,
-    DriverModule,
-    RaceModule,
-    TeamModule,
-    RaceResultModule,
+    // CarModule,
+    // AddressModule,
+    // ClassModule,
+    // DriverModule,
+    // RaceModule,
+    // TeamModule,
+    // RaceResultModule,
     AuthModule,
     UserModule,
-    AccountModule,
-    ContactModule,
-    CountryModule,
+    // AccountModule,
+    // ContactModule,
+    // CountryModule,
     TerminusModule
     // AutomapperModule.forRoot({
     //   options: [{

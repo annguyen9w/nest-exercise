@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigService } from '@nestjs/config'
 import { getConnectionOptions } from 'typeorm'
 import DatabaseLogger from './databaseLogger'
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => Object.assign(await getConnectionOptions(), {
         logger: new DatabaseLogger(),

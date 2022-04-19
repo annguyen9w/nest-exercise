@@ -1,42 +1,38 @@
 import { NestFactory } from '@nestjs/core'
 import { VersioningType } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+
+import { ConfigService } from '@nestjs/config'
 import { AppModule } from './app.module'
-import { appConfig } from './app.config'
 import { MzLogger } from './logger/logger.service'
 
 async function bootstrap() {
   const logger = new MzLogger('Bootstrap')
 
-  const app = await NestFactory.create(AppModule, { logger: appConfig.isVerbose() ? logger : false })
-  app.setGlobalPrefix(appConfig.getGlobalPrefix()) // http://localhost:3000/api/...
+  const app = await NestFactory.create(AppModule, { bufferLogs: true })
+  const configService = app.get<ConfigService>(ConfigService)
+  app.useLogger(configService.get('VERBOSE') === 'true' ? logger : false)
+
+  app.setGlobalPrefix(configService.get('API_PREFIX')) // http://localhost:3000/api/...
   app.enableVersioning({ // http://localhost:3000/api/v1.0/...
     type: VersioningType.URI,
-    defaultVersion: appConfig.getApiVersion()
+    defaultVersion: configService.get('API_VERSION')
   })
 
-  logger.debug(`isProduction: ${appConfig.isProduction()} --- isDebug: ${appConfig.isDebug()} --- isVerbose: ${appConfig.isVerbose()}`)
-  if (!appConfig.isProduction()) {
+  const isProduction = configService.get('MODE') === 'PROD'
+  logger.debug(`isProduction: ${isProduction} --- isDebug: ${configService.get('DEBUG') === 'true'} --- isVerbose: ${configService.get('VERBOSE') === 'true'} --- isHealthCheck: ${configService.get('HEALTH_CHECK') === 'true'}`)
+  if (!isProduction) {
     const document = SwaggerModule.createDocument(app, new DocumentBuilder()
       .setTitle('Mazi API')
       .setDescription('Mazi API\'s documentation')
-      .setVersion(appConfig.getApiVersion())
+      .setVersion(configService.get('API_VERSION'))
       .addBearerAuth()
-      .addTag('authen')
-      .addTag('users')
-      .addTag('addresses')
-      .addTag('classes')
-      .addTag('teams')
-      .addTag('drivers')
-      .addTag('cars')
-      .addTag('races')
-      .addTag('race-results')
       .build())
     SwaggerModule.setup('api', app, document) // NOTE: access the Swagger documentation at "/api"
   }
 
   app.enableCors()
-  logger.debug(`appConfig.getPort(): ${appConfig.getPort()}`)
-  await app.listen(appConfig.getPort())
+  logger.debug(`APP PORT: ${configService.get('PORT')}`)
+  await app.listen(configService.get('PORT'))
 }
 bootstrap()
