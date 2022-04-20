@@ -2,9 +2,10 @@ import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { MulterModule } from '@nestjs/platform-express'
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
 import * as Joi from 'joi'
 
-import { AppConfigService } from './app.config-service'
+// import { AppConfigService } from './app.config-service'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
@@ -48,6 +49,10 @@ import { AddressModule } from './app/address/address.module'
       })
     }),
     MulterModule.register(),
+    ThrottlerModule.forRoot({
+      ttl: 60, // retry after 60 seconds
+      limit: 3 // limit to 3 requests per 60 seconds
+    }),
 
     // Custom Module
     AuthModule,
@@ -79,7 +84,11 @@ import { AddressModule } from './app/address/address.module'
   controllers: [AppController],
   providers: [
     AppService,
-    AppConfigService,
+    // AppConfigService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard

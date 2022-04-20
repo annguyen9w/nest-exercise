@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigService } from '@nestjs/config'
-import { getConnectionOptions } from 'typeorm'
+
 import { MzLogger } from '../logger/logger.service'
 import { LoggerDatabase } from '../logger/logger.database'
 import { AppConfigService } from '../app.config-service'
@@ -10,11 +10,7 @@ import { AppConfigService } from '../app.config-service'
   imports: [
     TypeOrmModule.forRootAsync({
       inject: [ConfigService, LoggerDatabase, MzLogger],
-      useFactory: async (
-        configService: ConfigService,
-        appConfigService: AppConfigService,
-        logger: MzLogger
-      ) => Object.assign(await getConnectionOptions(), {
+      useFactory: (configService: ConfigService, appConfigService: AppConfigService, logger: MzLogger) => ({
         type: 'postgres',
         host: configService.get('POSTGRES_HOST'),
         port: Number(configService.get('POSTGRES_PORT')),

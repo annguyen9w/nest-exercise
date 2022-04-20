@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { TypeOrmModuleOptions } from '@nestjs/typeorm'
+// import { TypeOrmModuleOptions } from '@nestjs/typeorm'
 
 @Injectable()
 export class AppConfigService {
@@ -26,6 +26,10 @@ export class AppConfigService {
     return this.getConfigValue('API_VERSION')
   }
 
+  get getJwtSecretKey(): string {
+    return this.getConfigValue('JWT_SECRET', true)
+  }
+
   get isProduction(): boolean {
     const mode = this.getConfigValue('MODE', false)
     return mode === 'PROD' || process.env.NODE_ENV === 'production'
@@ -42,22 +46,5 @@ export class AppConfigService {
 
   get showHealthLogs(): boolean {
     return this.getConfigValue('SHOW_HEALTH_LOGS', false) === 'true'
-  }
-
-  get getTypeOrmConfig(): TypeOrmModuleOptions {
-    return {
-      type: 'postgres',
-      host: this.getConfigValue('POSTGRES_HOST'),
-      port: Number(this.getConfigValue('POSTGRES_PORT')),
-      username: this.getConfigValue('POSTGRES_USER'),
-      password: this.getConfigValue('POSTGRES_PASSWORD'),
-      database: this.getConfigValue('POSTGRES_DB'),
-      entities: ['**/*.entity{.ts,.js}'],
-      migrations: ['src/database/migration/*.ts'],
-      cli: {
-        migrationsDir: 'src/database/migration'
-      },
-      ssl: this.isProduction
-    }
   }
 }
