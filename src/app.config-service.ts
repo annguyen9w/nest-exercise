@@ -36,10 +36,6 @@ export class AppConfigService {
     return mode === 'TEST' || process.env.NODE_ENV === 'test'
   }
 
-  get isDebug(): boolean {
-    return this.getConfigValue('DEBUG', false) === 'true'
-  }
-
   get isVerbose(): boolean {
     return this.getConfigValue('VERBOSE', false) === 'true'
   }

@@ -2,11 +2,22 @@ import {
   ConsoleLogger, LoggerService,
   Injectable, Scope
 } from '@nestjs/common'
-// import type { LogLevel } from '@nestjs/common'
-// import { appConfig } from '../app.config'
+import { AppConfigService } from 'src/app.config-service'
+import type { LogLevel } from '@nestjs/common'
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class MzLogger extends ConsoleLogger implements LoggerService {
+  constructor(private appConfigService: AppConfigService) {
+    super()
+    if (this.appConfigService.isProduction) {
+      const lvs: LogLevel[] = ['error', 'warn', 'log']
+      super.warn(`get rid of "verbose" and "debug" logs on production, only ${lvs} logs will be shown`)
+      super.setLogLevels(lvs)
+    }
+    if (this.appConfigService.isTest) {
+      super.setLogLevels([])
+    }
+  }
   // constructor(
   //   context: string,
   //   options?: {
