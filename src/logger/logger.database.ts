@@ -1,6 +1,6 @@
 import type { Logger, QueryRunner } from 'typeorm'
 import { Injectable } from '@nestjs/common'
-import { MzLogger } from './logger.service'
+import { MzLoggerService } from './logger.service'
 import { AppConfigService } from '../app.config-service'
 
 const healthCheckQueryString = 'SELECT 1'
@@ -8,40 +8,40 @@ const healthCheckQueryString = 'SELECT 1'
 @Injectable()
 export class LoggerDatabase implements Logger {
   constructor(
-    private logger: MzLogger,
+    private loggerService: MzLoggerService,
     private appConfigService: AppConfigService
   ) {
-    this.logger.setContext('SQL')
+    this.loggerService.setContext('SQL')
   }
-  // private readonly logger = new MzLogger('SQL')
+  // private readonly loggerService = new MzLogger('SQL')
 
   logQuery(query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
     if (this.skipLoggingCheck(query, parameters, queryRunner)) {
       return
     }
-    this.logger.log(`${query} -- Parameters: ${this.stringifyParameters(parameters)}`)
+    this.loggerService.log(`${query} -- Parameters: ${this.stringifyParameters(parameters)}`)
   }
 
   logQueryError(error: string, query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
     if (this.skipLoggingCheck(query, parameters, queryRunner)) {
       return
     }
-    this.logger.error(`${query} -- Parameters: ${this.stringifyParameters(parameters)} -- ${error}`)
+    this.loggerService.error(`${query} -- Parameters: ${this.stringifyParameters(parameters)} -- ${error}`)
   }
 
   logQuerySlow(time: number, query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
     if (this.skipLoggingCheck(query, parameters, queryRunner)) {
       return
     }
-    this.logger.warn(`Time: ${time} -- Parameters: ${this.stringifyParameters(parameters)} -- ${query}`)
+    this.loggerService.warn(`Time: ${time} -- Parameters: ${this.stringifyParameters(parameters)} -- ${query}`)
   }
 
   logMigration(message: string) {
-    this.logger.log(message)
+    this.loggerService.log(message)
   }
 
   logSchemaBuild(message: string) {
-    this.logger.log(message)
+    this.loggerService.log(message)
   }
 
   log(level: 'log' | 'info' | 'warn', message: string, queryRunner?: QueryRunner) {
@@ -49,15 +49,15 @@ export class LoggerDatabase implements Logger {
       return
     }
     if (level === 'log') {
-      this.logger.log(message)
+      this.loggerService.log(message)
       return
     }
     if (level === 'info') {
-      this.logger.debug(message)
+      this.loggerService.debug(message)
       return
     }
     if (level === 'warn') {
-      this.logger.warn(message)
+      this.loggerService.warn(message)
     }
   }
 

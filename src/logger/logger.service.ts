@@ -2,11 +2,11 @@ import {
   ConsoleLogger, LoggerService,
   Injectable, Scope
 } from '@nestjs/common'
-import { AppConfigService } from 'src/app.config-service'
 import type { LogLevel } from '@nestjs/common'
+import { AppConfigService } from '../app.config-service'
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class MzLogger extends ConsoleLogger implements LoggerService {
+export class MzLoggerService extends ConsoleLogger implements LoggerService {
   constructor(private appConfigService: AppConfigService) {
     super()
     if (this.appConfigService.isProduction) {
@@ -18,20 +18,6 @@ export class MzLogger extends ConsoleLogger implements LoggerService {
       super.setLogLevels([])
     }
   }
-  // constructor(
-  //   context: string,
-  //   options?: {
-  //     timestamp?: boolean;
-  //   }
-  // ) {
-  //   super(context, options)
-  //   // super.debug(`isProduction: ${appConfig.isProduction()} --- isDebug: ${appConfig.isDebug()}`)
-  //   if (!appConfig.isDebug()) {
-  //     const lvs: LogLevel[] = ['error', 'warn', 'log']
-  //     super.warn(`get rid of "verbose" and "debug" logs on production, only ${lvs} logs will be shown`)
-  //     super.setLogLevels(lvs)
-  //   }
-  // }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private loggingSaving(...allTheArgs): void {
@@ -62,12 +48,5 @@ export class MzLogger extends ConsoleLogger implements LoggerService {
   verbose(...allTheArgs): void {
     this.loggingSaving(allTheArgs)
     super.verbose(allTheArgs)
-  }
-
-  showHealth(...allTheArgs): void {
-    // if (appConfig.showHealthLogs()) {
-    this.loggingSaving(allTheArgs)
-    super.verbose(allTheArgs)
-    // }
   }
 }

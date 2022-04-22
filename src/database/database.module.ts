@@ -2,15 +2,13 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigService } from '@nestjs/config'
 
-import { MzLogger } from '../logger/logger.service'
 import { LoggerDatabase } from '../logger/logger.database'
-import { AppConfigService } from '../app.config-service'
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      inject: [ConfigService, LoggerDatabase, MzLogger],
-      useFactory: (configService: ConfigService, appConfigService: AppConfigService, logger: MzLogger) => ({
+      inject: [ConfigService, LoggerDatabase],
+      useFactory: (configService: ConfigService, loggerDatabase: LoggerDatabase) => ({
         type: 'postgres',
         host: configService.get('POSTGRES_HOST'),
         port: Number(configService.get('POSTGRES_PORT')),
@@ -20,16 +18,15 @@ import { AppConfigService } from '../app.config-service'
         cli: {
           migrationsDir: 'src/database/migration'
         },
-        ssl: appConfigService.isProduction,
-        logger: new LoggerDatabase(logger, appConfigService),
+        ssl: configService.get('NODE_ENV') === 'PROD',
+        logger: loggerDatabase,
         entities: [`${__dirname}/../**/*.entity{.ts,.js}`],
         autoLoadEntities: true,
         synchronize: false, // NOTE: should be 'false' to avoid data loss, and to make the migrations work
-        migrationsRun: Boolean(configService.get('RUN_MIGRATIONS') === 'true'), // automatically run migrations
+        migrationsRun: configService.get<boolean>('RUN_MIGRATIONS'), // automatically run migrations
         migrations: [`${__dirname}/migration/*.{ts,js}`]
       })
     })
-  ],
-  providers: [AppConfigService]
+  ]
 })
 export class DatabaseModule {}

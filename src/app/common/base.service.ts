@@ -2,17 +2,17 @@ import {
   InsertResult, UpdateResult, DeleteResult, Repository
 } from 'typeorm'
 import type { EntityId } from 'typeorm/repository/EntityId'
-import { MzLogger } from '../../logger/logger.service'
+import { MzLoggerService } from '../../logger/logger.service'
 import { User } from '../../user/user.entity'
 
 export class BaseService<T> {
   constructor(
     protected readonly repository: Repository<T>,
-    private logger: MzLogger
+    private loggerService: MzLoggerService
   ) {
-    this.logger.setContext(this.constructor.name)
+    this.loggerService.setContext(this.constructor.name)
   }
-  // protected readonly logger = new MzLogger(this.constructor.name)
+  // protected readonly loggerService = new MzLogger(this.constructor.name)
 
   create(entity: T | Array<T>, createdBy: User): Promise<InsertResult> {
     const entities = Array.isArray(entity) ? entity : [entity]
@@ -52,7 +52,7 @@ export class BaseService<T> {
       //     }
       // })
     }
-    this.logger.debug(JSON.stringify(queryObj, null, 2), 'findAll - queryObj')
+    this.loggerService.debug(JSON.stringify(queryObj, null, 2), 'findAll - queryObj')
     const result = await this.repository.findAndCount(queryObj)
     return {
       data: result[0],

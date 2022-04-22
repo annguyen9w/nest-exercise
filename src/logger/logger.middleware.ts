@@ -1,12 +1,12 @@
 import { Injectable, NestMiddleware } from '@nestjs/common'
 import { Request, Response, NextFunction } from 'express'
-import { MzLogger } from './logger.service'
+import { MzLoggerService } from './logger.service'
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   // protected readonly logger = new MzLogger('HTTP')
-  constructor(private logger: MzLogger) {
-    this.logger.setContext('HTTP')
+  constructor(private loggerService: MzLoggerService) {
+    this.loggerService.setContext('HTTP')
   }
 
   use(request: Request, response: Response, next: NextFunction) {
@@ -17,18 +17,18 @@ export class LoggerMiddleware implements NestMiddleware {
       const message = `${method} ${originalUrl} ${statusCode} ${statusMessage}`
 
       if (statusCode >= 500) {
-        return this.logger.error(message)
+        return this.loggerService.error(message)
       }
 
       if (statusCode >= 400) {
-        return this.logger.warn(message)
+        return this.loggerService.warn(message)
       }
 
       if (originalUrl.includes('health')) {
-        return this.logger.showHealth(message)
+        return this.loggerService.verbose(message)
       }
 
-      return this.logger.log(message)
+      return this.loggerService.log(message)
     })
 
     next()
