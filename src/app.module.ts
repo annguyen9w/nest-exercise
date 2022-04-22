@@ -5,7 +5,6 @@ import { MulterModule } from '@nestjs/platform-express'
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
 import * as Joi from 'joi'
 
-// import { AppConfigService } from './app.config-service'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
@@ -39,13 +38,20 @@ import { AddressModule } from './app/address/address.module'
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
+        NODE_ENV: Joi.string().valid('DEV', 'PROD', 'TEST').default('DEV'),
+        PORT: Joi.number().default(3000),
+        API_VERSION: Joi.string().default('1.0'),
+        API_PREFIX: Joi.string().default('api'),
         POSTGRES_HOST: Joi.string().required(),
         POSTGRES_PORT: Joi.number().required(),
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
-        PORT: Joi.number().default(3000),
-        NODE_ENV: Joi.string().valid('development', 'production', 'test', 'provision').default('development')
+        RUN_MIGRATIONS: Joi.boolean().default(false),
+        VERBOSE: Joi.boolean().default(false),
+        SHOW_HEALTH_LOGS: Joi.boolean().default(false),
+        CLIENT_URL: Joi.string().required(),
+        JWT_SECRET: Joi.string().required()
       })
     }),
     MulterModule.register(),
@@ -84,7 +90,6 @@ import { AddressModule } from './app/address/address.module'
   controllers: [AppController],
   providers: [
     AppService,
-    // AppConfigService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
