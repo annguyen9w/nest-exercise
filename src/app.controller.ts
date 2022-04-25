@@ -1,8 +1,11 @@
 import {
-  Controller, Get, Post, UseGuards, Request, UsePipes, HttpCode, HttpStatus, BadRequestException
+  Controller, Get, Post, UseGuards, Request, UsePipes, BadRequestException, UseInterceptors, UploadedFile, Req
 } from '@nestjs/common'
-import * as Joi from 'joi'
+import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiOkResponse, ApiTags, ApiBody } from '@nestjs/swagger'
+import { diskStorage } from 'multer'
+import * as Joi from 'joi'
+import * as path from 'path'
 
 import { AppService } from './app.service'
 import { AuthService } from './auth/auth.service'
@@ -29,7 +32,6 @@ export class AppController {
   }
 
   @ApiTags('authen')
-  @Post('auth/login')
   @ApiBody({
     schema: {
       type: 'object',
@@ -41,11 +43,10 @@ export class AppController {
     }
   })
   @ApiOkResponse({
-    isArray: true,
     schema: {
       type: 'object',
       properties: {
-        access_token: { type: 'string', example: 'some_random_accesst_token' }
+        access_token: { type: 'string', example: 'some_random_access_token' }
       }
     }
   })
@@ -57,12 +58,42 @@ export class AppController {
   }))
   @UseGuards(LocalAuthGuard)
   @MzPublic()
-  @HttpCode(HttpStatus.OK)
+  @Post('auth/login')
   login(@Request() req) {
     try {
       return this.authService.login(req.user)
     } catch (error) {
       throw new BadRequestException(error)
     }
+  }
+
+  @MzPublic()
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, cb) => {
+        const fileExt: string = path.extname(file.originalname)
+        const fileName: string = path.basename(file.originalname, fileExt)
+        cb(null, path.join(`${fileName}_${Date.now().toString()}${fileExt}`))
+      }
+    }),
+    fileFilter: (req, file, cb) => {
+      if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+        req.fileValidationError = 'Only support image files'
+        return cb(null, false)
+      }
+      return cb(null, true)
+    },
+    limits: { fileSize: 1024 * 1024 } // 1MB
+  }))
+  uploadfile(@Req() req, @UploadedFile() file: Express.Multer.File) {
+    if (req.fileValidationError) {
+      throw new BadRequestException(req.fileValidationError)
+    }
+    if (!file) {
+      throw new BadRequestException('invalid file')
+    }
+    return file
   }
 }

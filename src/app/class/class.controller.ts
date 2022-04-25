@@ -4,15 +4,12 @@ import {
   Param, Body, HttpCode,
   ParseUUIDPipe,
   UsePipes,
-  HttpStatus, BadRequestException, NotFoundException, UploadedFile, UseInterceptors, Req, Version
+  HttpStatus, BadRequestException, NotFoundException, Req
 } from '@nestjs/common'
 import {
   ApiTags, ApiOkResponse, ApiNoContentResponse, ApiCreatedResponse, ApiBadRequestResponse, ApiNotFoundResponse
 } from '@nestjs/swagger'
-import { FileInterceptor } from '@nestjs/platform-express'
 import * as Joi from 'joi'
-import { diskStorage } from 'multer'
-import * as path from 'path'
 
 import { Mapper } from '../common/mapper'
 import { JoiValidationPipe } from '../common/validation.pipe'
@@ -118,36 +115,5 @@ export class ClassController {
     } catch (error) {
       return new BadRequestException(error)
     }
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  @Post('upload')
-  @Version(['1', '2'])
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const fileExt: string = path.extname(file.originalname)
-        const fileName: string = path.basename(file.originalname, fileExt)
-        cb(null, path.join(`${fileName}_${Date.now().toString()}${fileExt}`))
-      }
-    }),
-    fileFilter: (req, file, cb) => {
-      if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-        req.fileValidationError = 'Only support image files'
-        return cb(null, false)
-      }
-      return cb(null, true)
-    },
-    limits: { fileSize: 1024 * 1024 } // 1MB
-  }))
-  uploadfile(@Req() req, @UploadedFile() file: Express.Multer.File) {
-    if (req.fileValidationError) {
-      throw new BadRequestException(req.fileValidationError)
-    }
-    if (!file) {
-      throw new BadRequestException('invalid file')
-    }
-    return file
   }
 }
