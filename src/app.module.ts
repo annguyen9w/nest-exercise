@@ -56,6 +56,7 @@ import { VendorsModule } from './app/vendors/vendors.module'
     TerminusModule,
     UserModule,
 
+    // #region Import inside app modules
     ActivitiesModule,
     AdvertisersModule,
     AppModule,
@@ -70,6 +71,7 @@ import { VendorsModule } from './app/vendors/vendors.module'
     PrefixIsciModule,
     StationsModule,
     VendorsModule
+    // #endregion Import inside app modules
 
     // AutomapperModule.forRoot({
     //   options: [{
