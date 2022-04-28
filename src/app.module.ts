@@ -32,6 +32,7 @@ import { LocationsModule } from './app/locations/locations.module'
 import { PrefixIsciModule } from './app/prefix-isci/prefix-isci.module'
 import { StationsModule } from './app/stations/stations.module'
 import { VendorsModule } from './app/vendors/vendors.module'
+import { OrdersModule } from './app/orders/orders.module'
 // #endregion Import inside app modules
 
 @Module({
@@ -70,7 +71,8 @@ import { VendorsModule } from './app/vendors/vendors.module'
     LocationsModule,
     PrefixIsciModule,
     StationsModule,
-    VendorsModule
+    VendorsModule,
+    OrdersModule
     // #endregion Import inside app modules
 
     // AutomapperModule.forRoot({
